@@ -22,7 +22,7 @@ def require_api_key(
     x_lens_api_key: Annotated[str | None, Header()] = None,
     authorization: Annotated[str | None, Header()] = None,
 ) -> None:
-    if settings.api_key is None:
+    if not settings.api_key:
         return
     bearer = authorization.removeprefix("Bearer ").strip() if authorization else None
     if x_lens_api_key == settings.api_key or bearer == settings.api_key:

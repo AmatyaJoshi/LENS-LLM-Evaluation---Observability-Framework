@@ -116,6 +116,15 @@ def test_api_key_enforced_when_configured() -> None:
         assert ok2.status_code == 200
 
 
+def test_blank_api_key_disables_auth() -> None:
+    settings = Settings(span_store="memory", env="test", api_key="   ")
+    assert settings.api_key is None
+    app = create_app(settings)
+    app.dependency_overrides[get_settings] = lambda: settings
+    with TestClient(app) as c:
+        assert c.get("/traces").status_code == 200
+
+
 def test_redaction_applied_per_app() -> None:
     settings = Settings(span_store="memory", env="test", redact_apps="rag_demo")
     app = create_app(settings)

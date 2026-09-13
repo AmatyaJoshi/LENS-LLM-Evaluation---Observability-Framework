@@ -5,6 +5,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Literal
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -33,6 +34,14 @@ class Settings(BaseSettings):
     max_attribute_bytes: int = 64 * 1024
     redact_apps: str = ""  # comma-separated app names, or "*" for all
     default_app: str = "unknown"
+
+    @field_validator("api_key", mode="before")
+    @classmethod
+    def _empty_key_is_none(cls, v: object) -> object:
+        # docker compose passes LENS_API_KEY="" when unset; treat blank as "auth disabled".
+        if isinstance(v, str) and not v.strip():
+            return None
+        return v
 
     def redaction_enabled(self, app: str) -> bool:
         if not self.redact_apps:
