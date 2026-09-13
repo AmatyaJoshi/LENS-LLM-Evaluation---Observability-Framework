@@ -228,7 +228,7 @@ export function TrajectoryGraph({
   return (
     <div
       className={cn(
-        "h-[520px] overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs",
+        "h-[520px] overflow-hidden rounded-2xl border border-border/70 bg-card shadow-xs",
         className,
       )}
     >

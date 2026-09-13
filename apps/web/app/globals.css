@@ -5,47 +5,44 @@
 @layer base {
   :root {
     --font-sans:
-      var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    --font-mono:
-      var(--font-mono-jb), ui-monospace, "JetBrains Mono", SFMono-Regular, Menlo, monospace;
-    --radius: 0.625rem;
+      -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", var(--font-inter),
+      system-ui, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", SFMono-Regular, "Menlo", var(--font-mono-jb), monospace;
+    --radius: 0.75rem;
 
     /* Surfaces & ink — a calm, cool neutral scale (cloud-console light) */
-    --background: 240 20% 99%;
-    --foreground: 240 10% 9%;
+    --background: 240 20% 96.5%;
+    --foreground: 240 8% 12%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 9%;
     /* sidebar & rails sit one step off the content plane */
-    --sidebar: 240 20% 99.5%;
-    --rail: 240 24% 98%;
+    --sidebar: 0 0% 100%;
+    --rail: 240 20% 97.5%;
 
     /* Brand accent — a professional blue */
-    --primary: 222 83% 55%;
+    --primary: 211 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --accent-tint: 222 90% 96%;
+    --accent-tint: 211 100% 96%;
 
     --secondary: 240 6% 96%;
     --secondary-foreground: 240 8% 12%;
     --muted: 240 6% 96.5%;
-    --muted-foreground: 240 4% 44%;
+    --muted-foreground: 240 4% 46%;
     --accent: 240 6% 95%;
     --accent-foreground: 240 8% 12%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 8% 90.5%;
-    --input: 240 8% 89%;
-    --ring: 222 83% 55%;
+    --border: 240 10% 91%;
+    --input: 240 10% 90%;
+    --ring: 211 100% 50%;
 
-    --shadow-color: 240 30% 20%;
-    --shadow-xs: 0 1px 2px 0 hsl(var(--shadow-color) / 0.05);
-    --shadow-sm:
-      0 1px 2px -1px hsl(var(--shadow-color) / 0.08), 0 1px 3px 0 hsl(var(--shadow-color) / 0.06);
-    --shadow-md:
-      0 2px 4px -2px hsl(var(--shadow-color) / 0.08),
-      0 4px 12px -2px hsl(var(--shadow-color) / 0.08);
-    --shadow-lg: 0 12px 32px -8px hsl(var(--shadow-color) / 0.18);
+    --shadow-color: 240 30% 24%;
+    --shadow-xs: 0 1px 2px 0 hsl(var(--shadow-color) / 0.04);
+    --shadow-sm: 0 2px 8px -2px hsl(var(--shadow-color) / 0.08);
+    --shadow-md: 0 8px 24px -6px hsl(var(--shadow-color) / 0.1);
+    --shadow-lg: 0 24px 56px -16px hsl(var(--shadow-color) / 0.2);
 
     /* data-viz roles (validated palette, light) */
     --viz-surface: #ffffff;
@@ -75,18 +72,18 @@
   }
 
   .dark {
-    --background: 240 8% 5.5%;
-    --foreground: 240 10% 96%;
-    --card: 240 8% 8.5%;
-    --card-foreground: 240 10% 96%;
+    --background: 240 6% 4%;
+    --foreground: 240 10% 97%;
+    --card: 240 6% 9%;
+    --card-foreground: 240 10% 97%;
     --popover: 240 9% 9%;
     --popover-foreground: 240 10% 96%;
-    --sidebar: 240 9% 6.5%;
-    --rail: 240 9% 7.5%;
+    --sidebar: 240 6% 6.5%;
+    --rail: 240 6% 8%;
 
-    --primary: 217 91% 62%;
-    --primary-foreground: 240 40% 8%;
-    --accent-tint: 222 47% 16%;
+    --primary: 211 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --accent-tint: 214 60% 16%;
 
     --secondary: 240 6% 13%;
     --secondary-foreground: 240 10% 96%;
@@ -96,9 +93,9 @@
     --accent-foreground: 240 10% 96%;
     --destructive: 0 62% 47%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 6% 16%;
+    --border: 240 6% 15%;
     --input: 240 6% 18%;
-    --ring: 217 91% 62%;
+    --ring: 211 100% 60%;
 
     --shadow-color: 240 60% 2%;
     --shadow-xs: 0 1px 2px 0 hsl(var(--shadow-color) / 0.4);

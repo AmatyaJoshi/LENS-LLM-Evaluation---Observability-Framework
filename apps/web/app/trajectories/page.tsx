@@ -46,7 +46,7 @@ export default function TrajectoriesPage() {
         />
       ) : (
         <div className="grid gap-3 lg:grid-cols-[320px_1fr]">
-          <div className="overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs">
+          <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-xs">
             <div className="border-b px-3 py-2 text-sm text-muted-foreground">Recent runs</div>
             <ScrollArea className="h-[560px]">
               <ul className="divide-y">

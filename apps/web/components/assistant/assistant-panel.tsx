@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Bot, Send, Sparkles, X } from "lucide-react";
+import { Bot, Send, X } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { api, type AssistantFocus, type ChatResponse } from "@/lib/api";
@@ -111,22 +111,13 @@ export function AssistantPanel() {
 
   return (
     <>
-      <Button
-        onClick={() => setOpen(true)}
-        className="fixed bottom-5 right-5 z-40 h-11 gap-2 rounded-full shadow-lg"
-        aria-label="Open Lens Assistant"
-      >
-        <Sparkles className="h-4 w-4" />
-        Ask Lens
-      </Button>
-
       {open && (
         <div
-          className="fixed inset-0 z-50 flex justify-end bg-black/20"
+          className="fixed inset-0 z-50 flex justify-end bg-black/30 backdrop-blur-sm duration-200 animate-in fade-in"
           onClick={() => setOpen(false)}
         >
           <aside
-            className="flex h-full w-full max-w-md flex-col border-l bg-card shadow-xl"
+            className="flex h-full w-full max-w-md flex-col border-l border-border/80 bg-card/95 shadow-pop backdrop-blur-xl duration-300 animate-in slide-in-from-right"
             onClick={(e) => e.stopPropagation()}
           >
             <header className="flex items-center gap-2 border-b px-4 py-3">

@@ -37,7 +37,7 @@ export default function LivePage() {
           description="Every trace batch the API accepts shows up here within milliseconds. Replay a fixture or send traffic to see it."
         />
       ) : (
-        <ul className="divide-y rounded-xl border border-border/80 bg-card shadow-xs">
+        <ul className="divide-y rounded-2xl border border-border/70 bg-card shadow-xs">
           {events.map((e, i) => (
             <li
               key={`${e.trace_id}-${e.received_at}-${i}`}

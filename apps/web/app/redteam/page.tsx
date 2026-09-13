@@ -64,7 +64,7 @@ export default function RedteamPage() {
         description="Adversarial testing of your own app; attack success rate over time, before and after defences"
       />
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiTile
           label="Probes"
           value={catalogue.data?.total ?? "…"}
@@ -151,7 +151,7 @@ export default function RedteamPage() {
 
       {runs.data && runs.data.length > 0 && (
         <div className="mt-4 grid gap-4 lg:grid-cols-[320px_1fr]">
-          <div className="overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs">
+          <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-xs">
             <div className="border-b px-3 py-2 text-sm font-medium">Runs</div>
             <ul className="divide-y">
               {runs.data.map((r) => (
@@ -182,7 +182,7 @@ export default function RedteamPage() {
             </ul>
           </div>
 
-          <div className="overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs">
+          <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-xs">
             <div className="flex items-center gap-2 border-b px-3 py-2 text-sm font-medium">
               <ShieldAlert className="h-4 w-4 text-[color:var(--status-critical)]" /> Successful
               attacks

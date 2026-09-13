@@ -59,7 +59,7 @@ export default function OverviewPage() {
         </Card>
       )}
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-6">
         <KpiTile
           label="Traces"
           value={fmtInt(s?.traces ?? 0)}
@@ -134,7 +134,7 @@ export default function OverviewPage() {
           <div className="mt-4 grid gap-4 xl:grid-cols-[1fr_1fr_1.3fr]">
             <KindBreakdown stats={s} />
             <ModelTable stats={s} />
-            <div className="rounded-xl border border-border/80 bg-card shadow-xs">
+            <div className="rounded-2xl border border-border/70 bg-card shadow-xs">
               <div className="flex items-center justify-between px-4 pt-3">
                 <div>
                   <div className="text-[15px] font-medium">Recent traces</div>

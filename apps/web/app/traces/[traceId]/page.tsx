@@ -23,7 +23,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 
 function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div className="rounded-md border bg-card px-3 py-2">
+    <div className="rounded-xl border border-border/70 bg-card px-3 py-2.5 shadow-xs">
       <div className="text-[12px] uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="tabular mt-0.5 text-[15px] font-medium">{value}</div>
     </div>
@@ -141,7 +141,7 @@ export default function TraceDetailPage() {
         }
       />
 
-      <div className="grid grid-cols-3 gap-2 md:grid-cols-6">
+      <div className="grid grid-cols-3 gap-3 md:grid-cols-6">
         <Stat label="Duration" value={t ? fmtMs(t.duration_ms) : "…"} />
         <Stat label="Steps" value={t ? t.steps.length : "…"} />
         <Stat label="LLM calls" value={t ? t.steps.filter((s) => s.llm_call).length : "…"} />
@@ -210,7 +210,7 @@ export default function TraceDetailPage() {
         <TabsContent value="waterfall" className="mt-3">
           <ResizablePanelGroup
             direction="horizontal"
-            className="min-h-[460px] rounded-xl border border-border/80 bg-card shadow-xs"
+            className="min-h-[460px] rounded-2xl border border-border/70 bg-card shadow-xs"
           >
             <ResizablePanel defaultSize={62} minSize={40}>
               {spans.data ? (
@@ -234,7 +234,7 @@ export default function TraceDetailPage() {
           {t ? (
             <div className="grid gap-3 xl:grid-cols-[1fr_360px]">
               <TrajectoryGraph trajectory={t} onSelectSpan={setSelected} />
-              <div className="h-[520px] overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs">
+              <div className="h-[520px] overflow-hidden rounded-2xl border border-border/70 bg-card shadow-xs">
                 <SpanInspector span={selectedSpan} />
               </div>
             </div>

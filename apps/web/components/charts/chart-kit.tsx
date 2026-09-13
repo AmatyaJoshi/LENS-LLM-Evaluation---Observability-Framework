@@ -75,7 +75,7 @@ export function ChartCard({
   right?: React.ReactNode;
 }) {
   return (
-    <div className={cn("rounded-xl border border-border/80 bg-card shadow-xs", className)}>
+    <div className={cn("rounded-2xl border border-border/70 bg-card shadow-xs", className)}>
       <div className="flex items-start justify-between gap-3 border-b border-border/60 px-4 py-3">
         <div>
           <div className="text-sm font-semibold">{title}</div>

@@ -33,7 +33,7 @@ export default function SecurityPage() {
         description="Live prompt-injection detection over incoming messages, retrieved docs and tool results"
       />
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiTile
           label="Flagged traces"
           value={flagged.isLoading ? "…" : total}
@@ -49,7 +49,7 @@ export default function SecurityPage() {
         <KpiTile label="Threshold" value="0.50" hint="lens.security.flagged" />
       </div>
 
-      <div className="mt-4 rounded-xl border border-border/80 bg-card shadow-xs">
+      <div className="mt-4 rounded-2xl border border-border/70 bg-card shadow-xs">
         <div className="flex items-center gap-2 border-b px-4 py-2 text-sm font-medium">
           <ShieldCheck className="h-4 w-4 text-muted-foreground" /> Flagged traffic
         </div>

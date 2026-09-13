@@ -47,7 +47,7 @@ export default function RunDetailPage() {
         description={`${r.app} · ${r.mode} · judge ${r.judge_model ?? r.judge_tier ?? "–"}`}
       />
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
         {metricNames.map((m) => {
           const v = r.metrics[m] ?? 0;
           const good = m === "hallucination" ? 1 - v : v;
@@ -64,7 +64,7 @@ export default function RunDetailPage() {
         <KpiTile label="Cost" value={fmtUsd(r.cost_usd)} hint={`${r.errors} errors`} />
       </div>
 
-      <div className="mt-4 overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs">
+      <div className="mt-4 overflow-hidden rounded-2xl border border-border/70 bg-card shadow-xs">
         <div className="border-b px-4 py-2 text-sm font-medium">Per-example scores</div>
         <div className="scrollbar-thin overflow-x-auto">
           <table className="w-full text-sm">

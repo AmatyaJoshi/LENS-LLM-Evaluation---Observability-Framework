@@ -30,29 +30,31 @@ export function KpiTile({
   return (
     <div
       className={cn(
-        "group rounded-xl border border-border/80 bg-card px-4 py-3.5 shadow-xs transition-shadow hover:shadow-card",
+        "group flex min-h-[108px] flex-col justify-between rounded-2xl border border-border/70 bg-card p-4 shadow-xs transition-shadow hover:shadow-card",
         className,
       )}
     >
       <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-muted-foreground">{label}</span>
+        <span className="truncate text-[13px] font-medium text-muted-foreground">{label}</span>
         {Icon && (
-          <span className="flex h-6 w-6 items-center justify-center rounded-md bg-muted/70 text-muted-foreground transition-colors group-hover:bg-accent-tint group-hover:text-primary">
-            <Icon className="h-3.5 w-3.5" />
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted/70 text-muted-foreground transition-colors group-hover:bg-accent-tint group-hover:text-primary">
+            <Icon className="h-[15px] w-[15px]" />
           </span>
         )}
       </div>
-      {loading ? (
-        <Skeleton className="mt-2.5 h-7 w-24" />
-      ) : (
-        <div
-          className="tabular mt-1.5 text-2xl font-semibold tracking-tight"
-          style={toneVar ? { color: toneVar } : undefined}
-        >
-          {value}
-        </div>
-      )}
-      {hint && <div className="mt-1 text-[11px] text-muted-foreground">{hint}</div>}
+      <div className="mt-2">
+        {loading ? (
+          <Skeleton className="h-8 w-24" />
+        ) : (
+          <div
+            className="tabular text-[28px] font-semibold leading-none tracking-tight"
+            style={toneVar ? { color: toneVar } : undefined}
+          >
+            {value}
+          </div>
+        )}
+        {hint && <div className="mt-1.5 truncate text-[11px] text-muted-foreground">{hint}</div>}
+      </div>
     </div>
   );
 }

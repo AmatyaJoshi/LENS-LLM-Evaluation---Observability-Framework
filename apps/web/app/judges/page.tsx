@@ -28,7 +28,7 @@ function AgreementTable({ title, rows }: { title: string; rows: AgreementReport[
       </div>
     );
   return (
-    <div className="overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs">
+    <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-xs">
       <div className="border-b px-4 py-2 text-sm font-medium">{title}</div>
       <table className="w-full text-sm">
         <thead className="text-xs text-muted-foreground">
@@ -98,7 +98,7 @@ export default function JudgesPage() {
           </div>
 
           {q && q.costs.length > 0 && (
-            <div className="overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs">
+            <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-xs">
               <div className="border-b px-4 py-2 text-sm font-medium">
                 Cost &amp; latency per judge
               </div>
