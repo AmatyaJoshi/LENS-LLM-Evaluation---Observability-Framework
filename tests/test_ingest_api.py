@@ -100,11 +100,17 @@ def test_websocket_receives_trace_notification(client: TestClient) -> None:
     with client.websocket_connect("/ws/traces") as ws:
         client.post("/v1/traces", json=load_fixture("openllmetry_ts"))
         msg = ws.receive_json()
-    assert msg == {"type": "trace", "trace_id": TRACE_ID, "app": "rag_demo", "spans": 5}
+    assert msg == {
+        "type": "trace",
+        "trace_id": TRACE_ID,
+        "app": "rag_demo",
+        "spans": 5,
+        "flagged": 0,
+    }
 
 
 def test_api_key_enforced_when_configured() -> None:
-    settings = Settings(span_store="memory", env="test", api_key="secret")
+    settings = Settings(span_store="memory", env="test", api_key="secret", postgres_dsn="sqlite://")
     app = create_app(settings)
     app.dependency_overrides[get_settings] = lambda: settings
     with TestClient(app) as c:
@@ -117,7 +123,7 @@ def test_api_key_enforced_when_configured() -> None:
 
 
 def test_blank_api_key_disables_auth() -> None:
-    settings = Settings(span_store="memory", env="test", api_key="   ")
+    settings = Settings(span_store="memory", env="test", api_key="   ", postgres_dsn="sqlite://")
     assert settings.api_key is None
     app = create_app(settings)
     app.dependency_overrides[get_settings] = lambda: settings
@@ -126,7 +132,9 @@ def test_blank_api_key_disables_auth() -> None:
 
 
 def test_redaction_applied_per_app() -> None:
-    settings = Settings(span_store="memory", env="test", redact_apps="rag_demo")
+    settings = Settings(
+        span_store="memory", env="test", redact_apps="rag_demo", postgres_dsn="sqlite://"
+    )
     app = create_app(settings)
     app.dependency_overrides[get_settings] = lambda: settings
     payload = load_fixture("lens_sdk")

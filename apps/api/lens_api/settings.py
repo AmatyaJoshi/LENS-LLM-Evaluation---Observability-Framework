@@ -35,6 +35,20 @@ class Settings(BaseSettings):
     redact_apps: str = ""  # comma-separated app names, or "*" for all
     default_app: str = "unknown"
 
+    # online evaluation sampling (SPEC.md §5.4)
+    eval_dispatch: Literal["off", "inline", "celery"] = "off"
+    eval_sample_rate: float = 0.1  # fraction of ok traces to score
+    eval_on_error: bool = True  # always score traces containing an error span
+    eval_on_negative_feedback: bool = (
+        True  # always score traces with lens.user.feedback < 0 / thumbs down
+    )
+    eval_metrics: str = "faithfulness,answer_relevance,hallucination,safety"
+    eval_judge_tier: str = "frontier"
+
+    # live injection detection (SPEC.md §6.5)
+    detector_enabled: bool = True
+    detector_threshold: float = 0.5
+
     @field_validator("api_key", mode="before")
     @classmethod
     def _empty_key_is_none(cls, v: object) -> object:

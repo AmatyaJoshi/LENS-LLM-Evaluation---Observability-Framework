@@ -21,7 +21,7 @@ def load_fixture(name: str) -> dict[str, Any]:
 
 @pytest.fixture
 def memory_settings() -> Settings:
-    return Settings(span_store="memory", env="test", api_key=None)
+    return Settings(span_store="memory", env="test", api_key=None, postgres_dsn="sqlite://")
 
 
 @pytest.fixture

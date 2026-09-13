@@ -19,7 +19,7 @@ def test_version() -> None:
     assert result.exit_code == 0 and result.output.startswith("lens ")
 
 
-def test_unimplemented_commands_exit_2() -> None:
+def test_commands_require_their_options() -> None:
     for cmd in ("eval", "redteam", "label", "ci"):
         result = runner.invoke(app, [cmd])
-        assert result.exit_code == 2, cmd
+        assert result.exit_code == 2, cmd  # typer usage error: missing required options
