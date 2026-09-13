@@ -23,6 +23,7 @@ dev = [
   "httpx>=0.27",
   "ruff>=0.6",
   "mypy>=1.11",
+  "types-PyYAML>=6.0",
   "lens-core",
   "lens-api",
   "lens-worker",
@@ -39,6 +40,7 @@ select = ["E", "F", "I", "UP", "B", "SIM", "N", "W"]
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["E501"]
 "packages/lens-core/tests/**" = ["E501"]
+"packages/lens-core/lens_core/redteam/detector.py" = ["E501"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["lens_core", "lens_api", "lens_worker", "lens_sdk", "tests"]
@@ -52,6 +54,10 @@ strict = true
 packages = ["lens_core"]
 mypy_path = "packages/lens-core"
 plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["numpy", "numpy.*", "onnxruntime", "tokenizers", "litellm", "litellm.*"]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "packages/lens-core/tests"]

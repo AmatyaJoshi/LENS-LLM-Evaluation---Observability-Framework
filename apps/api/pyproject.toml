@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Lens API: OTLP ingest, normalisation, trace/eval REST + WebSocket"
 requires-python = ">=3.12"
 dependencies = [
-  "lens-core",
+  "lens-core[judges]",
   "fastapi>=0.115",
   "uvicorn[standard]>=0.30",
   "pydantic>=2.8",
