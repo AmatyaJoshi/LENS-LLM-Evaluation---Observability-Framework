@@ -146,7 +146,7 @@ export default function TracesPage() {
         <TraceFilters value={filters} onChange={setFilters} models={models} />
       </div>
 
-      <div className="overflow-hidden rounded-lg border bg-card">
+      <div className="overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs">
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent [&>th]:h-9 [&>th]:text-sm">

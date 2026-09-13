@@ -28,7 +28,7 @@ export function ScoresPanel({ trajectory }: { trajectory: Trajectory }) {
   const rows = scores.data ?? [];
 
   return (
-    <div className="rounded-lg border bg-card p-3">
+    <div className="rounded-xl border border-border/80 bg-card p-3 shadow-xs">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm font-medium">
           <FlaskConical className="h-4 w-4 text-muted-foreground" /> Evaluation
@@ -95,7 +95,7 @@ export function SecurityPanel({ spans }: { spans: Span[] }) {
   );
 
   return (
-    <div className="rounded-lg border bg-card p-3">
+    <div className="rounded-xl border border-border/80 bg-card p-3 shadow-xs">
       <div className="flex items-center gap-2 text-sm font-medium">
         <ShieldCheck className="h-4 w-4 text-muted-foreground" /> Security
       </div>

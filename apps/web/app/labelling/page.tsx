@@ -127,7 +127,7 @@ export default function LabellingPage() {
             </span>
           </div>
 
-          <div className="space-y-3 rounded-lg border bg-card p-4">
+          <div className="space-y-3 rounded-xl border border-border/80 bg-card p-4 shadow-xs">
             <div>
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
                 Input

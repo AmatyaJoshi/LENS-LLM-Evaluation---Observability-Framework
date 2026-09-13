@@ -4,38 +4,56 @@
 
 @layer base {
   :root {
-    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    --font-mono: ui-monospace, "JetBrains Mono", "Cascadia Code", SFMono-Regular, Menlo, monospace;
-    --radius: 0.5rem;
+    --font-sans:
+      var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono:
+      var(--font-mono-jb), ui-monospace, "JetBrains Mono", SFMono-Regular, Menlo, monospace;
+    --radius: 0.625rem;
 
-    /* shadcn surface tokens (zinc, warm-shifted) */
-    --background: 40 6% 97.5%;
-    --foreground: 240 10% 4%;
+    /* Surfaces & ink — a calm, cool neutral scale (cloud-console light) */
+    --background: 240 20% 99%;
+    --foreground: 240 10% 9%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 4%;
+    --card-foreground: 240 10% 9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 4%;
-    --primary: 216 68% 50%;
+    --popover-foreground: 240 10% 9%;
+    /* sidebar & rails sit one step off the content plane */
+    --sidebar: 240 20% 99.5%;
+    --rail: 240 24% 98%;
+
+    /* Brand accent — a professional blue */
+    --primary: 222 83% 55%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 5% 94%;
-    --secondary-foreground: 240 6% 10%;
-    --muted: 240 5% 94%;
-    --muted-foreground: 240 4% 42%;
-    --accent: 240 5% 93%;
-    --accent-foreground: 240 6% 10%;
-    --destructive: 0 62% 52%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 6% 88%;
-    --input: 240 6% 88%;
-    --ring: 216 68% 50%;
+    --accent-tint: 222 90% 96%;
+
+    --secondary: 240 6% 96%;
+    --secondary-foreground: 240 8% 12%;
+    --muted: 240 6% 96.5%;
+    --muted-foreground: 240 4% 44%;
+    --accent: 240 6% 95%;
+    --accent-foreground: 240 8% 12%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 8% 90.5%;
+    --input: 240 8% 89%;
+    --ring: 222 83% 55%;
+
+    --shadow-color: 240 30% 20%;
+    --shadow-xs: 0 1px 2px 0 hsl(var(--shadow-color) / 0.05);
+    --shadow-sm:
+      0 1px 2px -1px hsl(var(--shadow-color) / 0.08), 0 1px 3px 0 hsl(var(--shadow-color) / 0.06);
+    --shadow-md:
+      0 2px 4px -2px hsl(var(--shadow-color) / 0.08),
+      0 4px 12px -2px hsl(var(--shadow-color) / 0.08);
+    --shadow-lg: 0 12px 32px -8px hsl(var(--shadow-color) / 0.18);
 
     /* data-viz roles (validated palette, light) */
-    --viz-surface: #fcfcfb;
-    --viz-grid: #e1e0d9;
-    --viz-axis: #c3c2b7;
-    --viz-muted: #898781;
-    --viz-ink: #0b0b0b;
-    --viz-ink-2: #52514e;
+    --viz-surface: #ffffff;
+    --viz-grid: #ececf1;
+    --viz-axis: #d5d5de;
+    --viz-muted: #8a8a99;
+    --viz-ink: #0b0b0f;
+    --viz-ink-2: #52525e;
     --series-1: #2a78d6;
     --series-2: #eb6834;
     --series-3: #1baf7a;
@@ -50,53 +68,68 @@
     --seq-500: #256abf;
     --seq-600: #184f95;
     --status-good: #0ca30c;
-    --status-warning: #fab219;
+    --status-warning: #f5a623;
     --status-serious: #ec835a;
-    --status-critical: #d03b3b;
-    --status-good-text: #006300;
+    --status-critical: #e5484d;
+    --status-good-text: #157f3c;
   }
 
   .dark {
-    --background: 60 3% 5%;
-    --foreground: 0 0% 98%;
-    --card: 60 2% 10%;
-    --card-foreground: 0 0% 98%;
-    --popover: 60 2% 9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 216 75% 56%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 60 2% 15%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 60 2% 15%;
-    --muted-foreground: 50 6% 64%;
-    --accent: 60 2% 16%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62% 45%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 60 2% 17%;
-    --input: 60 2% 17%;
-    --ring: 216 75% 56%;
+    --background: 240 8% 5.5%;
+    --foreground: 240 10% 96%;
+    --card: 240 8% 8.5%;
+    --card-foreground: 240 10% 96%;
+    --popover: 240 9% 9%;
+    --popover-foreground: 240 10% 96%;
+    --sidebar: 240 9% 6.5%;
+    --rail: 240 9% 7.5%;
 
-    --viz-surface: #1a1a19;
-    --viz-grid: #2c2c2a;
-    --viz-axis: #383835;
-    --viz-muted: #898781;
-    --viz-ink: #ffffff;
-    --viz-ink-2: #c3c2b7;
+    --primary: 217 91% 62%;
+    --primary-foreground: 240 40% 8%;
+    --accent-tint: 222 47% 16%;
+
+    --secondary: 240 6% 13%;
+    --secondary-foreground: 240 10% 96%;
+    --muted: 240 6% 13%;
+    --muted-foreground: 240 6% 60%;
+    --accent: 240 6% 15%;
+    --accent-foreground: 240 10% 96%;
+    --destructive: 0 62% 47%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 6% 16%;
+    --input: 240 6% 18%;
+    --ring: 217 91% 62%;
+
+    --shadow-color: 240 60% 2%;
+    --shadow-xs: 0 1px 2px 0 hsl(var(--shadow-color) / 0.4);
+    --shadow-sm: 0 1px 3px 0 hsl(var(--shadow-color) / 0.5);
+    --shadow-md: 0 4px 12px -2px hsl(var(--shadow-color) / 0.5);
+    --shadow-lg: 0 16px 40px -12px hsl(var(--shadow-color) / 0.6);
+
+    --viz-surface: #111114;
+    --viz-grid: #23232a;
+    --viz-axis: #34343d;
+    --viz-muted: #7c7c88;
+    --viz-ink: #f4f4f6;
+    --viz-ink-2: #b6b6c0;
     --series-1: #3987e5;
-    --series-2: #d95926;
-    --series-3: #199e70;
-    --series-4: #c98500;
-    --series-5: #d55181;
-    --series-6: #008300;
+    --series-2: #e0672f;
+    --series-3: #22b483;
+    --series-4: #d99a1a;
+    --series-5: #e07aa6;
+    --series-6: #2a9d2a;
     --series-7: #9085e9;
-    --series-8: #e66767;
+    --series-8: #e5595a;
     --seq-200: #9ec5f4;
     --seq-300: #6da7ec;
     --seq-400: #3987e5;
     --seq-500: #256abf;
     --seq-600: #184f95;
-    --status-good-text: #0ca30c;
+    --status-good: #2ebd4e;
+    --status-warning: #f5a623;
+    --status-serious: #ec835a;
+    --status-critical: #e5484d;
+    --status-good-text: #4cc76a;
   }
 
   * {
@@ -104,13 +137,38 @@
   }
   html {
     @apply antialiased;
+    text-rendering: optimizeLegibility;
   }
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "cv11", "ss01";
+    font-size: 14px;
   }
   ::selection {
-    @apply bg-primary/25;
+    @apply bg-primary/20;
+  }
+  /* refined focus ring across the app */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring/60 ring-offset-1 ring-offset-background;
+  }
+  /* thin, unobtrusive scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+    background-clip: content-box;
   }
 }
 
@@ -120,7 +178,22 @@
   }
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  .shadow-xs {
+    box-shadow: var(--shadow-xs);
+  }
+  .shadow-card {
+    box-shadow: var(--shadow-sm);
+  }
+  .shadow-pop {
+    box-shadow: var(--shadow-lg);
+  }
+  /* faint grid/gradient page texture used behind hero areas */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.5) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.5) 1px, transparent 1px);
+    background-size: 32px 32px;
   }
   .kind-llm {
     color: var(--series-1);
@@ -176,6 +249,11 @@
 }
 .react-flow__edge.animated .react-flow__edge-path {
   stroke: var(--series-1);
+}
+.react-flow__controls {
+  box-shadow: var(--shadow-sm) !important;
+  border-radius: 8px;
+  overflow: hidden;
 }
 .react-flow__controls button {
   @apply border-border bg-card text-foreground;

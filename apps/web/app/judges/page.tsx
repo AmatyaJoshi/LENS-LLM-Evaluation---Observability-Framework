@@ -20,7 +20,7 @@ function kappaColor(k: number): string {
 function AgreementTable({ title, rows }: { title: string; rows: AgreementReport[] }) {
   if (rows.length === 0)
     return (
-      <div className="rounded-lg border bg-card p-4">
+      <div className="rounded-xl border border-border/80 bg-card p-4 shadow-xs">
         <div className="text-sm font-medium">{title}</div>
         <p className="mt-1 text-xs text-muted-foreground">
           Needs human labels and judge scores on the same items. Label from the Labelling page.
@@ -28,7 +28,7 @@ function AgreementTable({ title, rows }: { title: string; rows: AgreementReport[
       </div>
     );
   return (
-    <div className="overflow-hidden rounded-lg border bg-card">
+    <div className="overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs">
       <div className="border-b px-4 py-2 text-sm font-medium">{title}</div>
       <table className="w-full text-sm">
         <thead className="text-xs text-muted-foreground">
@@ -98,7 +98,7 @@ export default function JudgesPage() {
           </div>
 
           {q && q.costs.length > 0 && (
-            <div className="overflow-hidden rounded-lg border bg-card">
+            <div className="overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs">
               <div className="border-b px-4 py-2 text-sm font-medium">
                 Cost &amp; latency per judge
               </div>
@@ -135,7 +135,7 @@ export default function JudgesPage() {
             </div>
           )}
 
-          <div className="rounded-lg border bg-card p-4">
+          <div className="rounded-xl border border-border/80 bg-card p-4 shadow-xs">
             <div className="text-sm font-medium">Versioned judge prompts</div>
             <p className="mt-1 text-xs text-muted-foreground">
               Every score records the prompt name and version it was produced with (provenance).

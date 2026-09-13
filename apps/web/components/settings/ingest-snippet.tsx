@@ -58,7 +58,7 @@ export function IngestSnippet({ compact, className }: { compact?: boolean; class
     }
   };
   return (
-    <div className={cn("rounded-lg border bg-card", className)}>
+    <div className={cn("rounded-xl border border-border/80 bg-card shadow-xs", className)}>
       <div className="px-4 pt-3">
         <div className="text-[15px] font-medium">Connect an app</div>
         <div className="text-[13px] text-muted-foreground">

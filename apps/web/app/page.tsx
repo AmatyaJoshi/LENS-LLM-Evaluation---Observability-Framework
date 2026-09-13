@@ -134,7 +134,7 @@ export default function OverviewPage() {
           <div className="mt-4 grid gap-4 xl:grid-cols-[1fr_1fr_1.3fr]">
             <KindBreakdown stats={s} />
             <ModelTable stats={s} />
-            <div className="rounded-lg border bg-card">
+            <div className="rounded-xl border border-border/80 bg-card shadow-xs">
               <div className="flex items-center justify-between px-4 pt-3">
                 <div>
                   <div className="text-[15px] font-medium">Recent traces</div>

@@ -20,7 +20,7 @@ export function ChartTooltip({
 }: TooltipProps<number, string> & { format?: (v: number, key: string) => string }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-popover rounded-md border px-2.5 py-2 text-sm shadow-md">
+    <div className="rounded-md border bg-popover px-2.5 py-2 text-sm shadow-md">
       <div className="mb-1 text-muted-foreground">{label}</div>
       {payload.map((p) => (
         <div key={String(p.dataKey)} className="flex items-center gap-2">
@@ -75,18 +75,18 @@ export function ChartCard({
   right?: React.ReactNode;
 }) {
   return (
-    <div className={cn("rounded-lg border bg-card", className)}>
-      <div className="flex items-start justify-between gap-3 px-4 pt-3">
+    <div className={cn("rounded-xl border border-border/80 bg-card shadow-xs", className)}>
+      <div className="flex items-start justify-between gap-3 border-b border-border/60 px-4 py-3">
         <div>
-          <div className="text-[15px] font-medium">{title}</div>
-          {subtitle && <div className="text-[13px] text-muted-foreground">{subtitle}</div>}
+          <div className="text-sm font-semibold">{title}</div>
+          {subtitle && <div className="mt-0.5 text-xs text-muted-foreground">{subtitle}</div>}
         </div>
         <div className="flex items-center gap-3">
           {legend && legend.length > 1 && <Legend items={legend} />}
           {right}
         </div>
       </div>
-      <div className="px-2 pb-2 pt-2">{children}</div>
+      <div className="px-2 pb-2 pt-3">{children}</div>
     </div>
   );
 }

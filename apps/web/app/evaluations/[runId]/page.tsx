@@ -64,7 +64,7 @@ export default function RunDetailPage() {
         <KpiTile label="Cost" value={fmtUsd(r.cost_usd)} hint={`${r.errors} errors`} />
       </div>
 
-      <div className="mt-4 overflow-hidden rounded-lg border bg-card">
+      <div className="mt-4 overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs">
         <div className="border-b px-4 py-2 text-sm font-medium">Per-example scores</div>
         <div className="scrollbar-thin overflow-x-auto">
           <table className="w-full text-sm">

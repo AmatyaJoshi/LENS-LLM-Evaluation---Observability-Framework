@@ -94,7 +94,7 @@ export default function DatasetsPage() {
       ) : (
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {datasets.data?.map((d) => (
-            <div key={d.id} className="rounded-lg border bg-card p-4">
+            <div key={d.id} className="rounded-xl border border-border/80 bg-card p-4 shadow-xs">
               <div className="flex items-center justify-between">
                 <span className="font-medium">{d.name}</span>
                 <span className="rounded border px-1.5 py-0.5 text-[10px] text-muted-foreground">

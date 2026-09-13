@@ -1,6 +1,5 @@
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function KpiTile({
@@ -29,22 +28,31 @@ export function KpiTile({
           ? "var(--status-critical)"
           : undefined;
   return (
-    <Card className={cn("px-4 py-3", className)}>
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <span>{label}</span>
-        {Icon && <Icon className="h-3.5 w-3.5 opacity-70" />}
+    <div
+      className={cn(
+        "group rounded-xl border border-border/80 bg-card px-4 py-3.5 shadow-xs transition-shadow hover:shadow-card",
+        className,
+      )}
+    >
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-muted-foreground">{label}</span>
+        {Icon && (
+          <span className="flex h-6 w-6 items-center justify-center rounded-md bg-muted/70 text-muted-foreground transition-colors group-hover:bg-accent-tint group-hover:text-primary">
+            <Icon className="h-3.5 w-3.5" />
+          </span>
+        )}
       </div>
       {loading ? (
-        <Skeleton className="mt-2 h-7 w-24" />
+        <Skeleton className="mt-2.5 h-7 w-24" />
       ) : (
         <div
-          className="mt-1 text-2xl font-semibold tracking-tight"
+          className="tabular mt-1.5 text-2xl font-semibold tracking-tight"
           style={toneVar ? { color: toneVar } : undefined}
         >
           {value}
         </div>
       )}
-      {hint && <div className="mt-0.5 text-[13px] text-muted-foreground">{hint}</div>}
-    </Card>
+      {hint && <div className="mt-1 text-[11px] text-muted-foreground">{hint}</div>}
+    </div>
   );
 }

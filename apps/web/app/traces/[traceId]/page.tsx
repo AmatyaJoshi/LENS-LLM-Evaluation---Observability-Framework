@@ -155,13 +155,13 @@ export default function TraceDetailPage() {
 
       {t && (
         <div className="mt-4 grid gap-3 lg:grid-cols-2">
-          <div className="rounded-lg border bg-card p-3">
+          <div className="rounded-xl border border-border/80 bg-card p-3 shadow-xs">
             <div className="text-[12px] uppercase tracking-wider text-muted-foreground">Input</div>
             <p className="mt-1 whitespace-pre-wrap text-[15px] leading-relaxed">
               {t.user_input ?? <span className="text-muted-foreground">none</span>}
             </p>
           </div>
-          <div className="rounded-lg border bg-card p-3">
+          <div className="rounded-xl border border-border/80 bg-card p-3 shadow-xs">
             <div className="text-[12px] uppercase tracking-wider text-muted-foreground">
               Final output
             </div>
@@ -210,7 +210,7 @@ export default function TraceDetailPage() {
         <TabsContent value="waterfall" className="mt-3">
           <ResizablePanelGroup
             direction="horizontal"
-            className="min-h-[460px] rounded-lg border bg-card"
+            className="min-h-[460px] rounded-xl border border-border/80 bg-card shadow-xs"
           >
             <ResizablePanel defaultSize={62} minSize={40}>
               {spans.data ? (
@@ -234,7 +234,7 @@ export default function TraceDetailPage() {
           {t ? (
             <div className="grid gap-3 xl:grid-cols-[1fr_360px]">
               <TrajectoryGraph trajectory={t} onSelectSpan={setSelected} />
-              <div className="h-[520px] overflow-hidden rounded-lg border bg-card">
+              <div className="h-[520px] overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs">
                 <SpanInspector span={selectedSpan} />
               </div>
             </div>
@@ -245,7 +245,7 @@ export default function TraceDetailPage() {
 
         <TabsContent value="conversation" className="mt-3">
           <div className="grid gap-4 xl:grid-cols-[1fr_320px]">
-            <div className="rounded-lg border bg-card p-4">
+            <div className="rounded-xl border border-border/80 bg-card p-4 shadow-xs">
               {t ? <Conversation trajectory={t} /> : <Skeleton className="h-64 w-full" />}
             </div>
             <div className="space-y-3">
@@ -262,7 +262,7 @@ export default function TraceDetailPage() {
           {t ? <Tools trajectory={t} /> : <Skeleton className="h-40 w-full" />}
         </TabsContent>
         <TabsContent value="raw" className="mt-3">
-          <pre className="scrollbar-thin max-h-[640px] overflow-auto rounded-lg border bg-card p-4 font-mono text-[13px] leading-relaxed">
+          <pre className="scrollbar-thin max-h-[640px] overflow-auto rounded-xl border border-border/80 bg-card p-4 font-mono text-[13px] leading-relaxed shadow-xs">
             {JSON.stringify({ trajectory: t, spans: spans.data }, null, 2)}
           </pre>
         </TabsContent>

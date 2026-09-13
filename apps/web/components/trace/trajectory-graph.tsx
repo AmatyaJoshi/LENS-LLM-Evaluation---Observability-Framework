@@ -52,7 +52,7 @@ function LensNodeView({ data, selected }: NodeProps<LensNode>) {
   return (
     <div
       className={cn(
-        "w-[220px] rounded-lg border bg-card text-left shadow-sm transition-shadow",
+        "w-[220px] rounded-xl border border-border/80 bg-card text-left shadow-sm shadow-xs transition-shadow",
         selected && "ring-2 ring-primary",
         data.error && "border-[color:var(--status-critical)]",
       )}
@@ -226,7 +226,12 @@ export function TrajectoryGraph({
 }) {
   const { nodes, edges } = useMemo(() => buildGraph(trajectory), [trajectory]);
   return (
-    <div className={cn("h-[520px] overflow-hidden rounded-lg border bg-card", className)}>
+    <div
+      className={cn(
+        "h-[520px] overflow-hidden rounded-xl border border-border/80 bg-card shadow-xs",
+        className,
+      )}
+    >
       <ReactFlow
         nodes={nodes}
         edges={edges}

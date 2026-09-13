@@ -49,7 +49,7 @@ export default function SecurityPage() {
         <KpiTile label="Threshold" value="0.50" hint="lens.security.flagged" />
       </div>
 
-      <div className="mt-4 rounded-lg border bg-card">
+      <div className="mt-4 rounded-xl border border-border/80 bg-card shadow-xs">
         <div className="flex items-center gap-2 border-b px-4 py-2 text-sm font-medium">
           <ShieldCheck className="h-4 w-4 text-muted-foreground" /> Flagged traffic
         </div>
@@ -102,7 +102,7 @@ export default function SecurityPage() {
         )}
       </div>
 
-      <div className="mt-4 rounded-lg border bg-card p-4 text-xs text-muted-foreground">
+      <div className="mt-4 rounded-xl border border-border/80 bg-card p-4 text-xs text-muted-foreground shadow-xs">
         <div className="text-sm font-medium text-foreground">How detection works</div>
         <p className="mt-1">
           At ingest, every untrusted text segment (user and tool messages, retrieved documents, tool

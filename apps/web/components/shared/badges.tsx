@@ -14,10 +14,10 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[13px] font-medium",
+        "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium",
         ok
-          ? "border-[color:var(--status-good)]/30 text-[color:var(--status-good-text)]"
-          : "border-[color:var(--status-critical)]/40 text-[color:var(--status-critical)]",
+          ? "border-[color:var(--status-good)]/25 bg-[color:var(--status-good)]/10 text-[color:var(--status-good-text)]"
+          : "border-[color:var(--status-critical)]/30 bg-[color:var(--status-critical)]/10 text-[color:var(--status-critical)]",
         className,
       )}
     >
@@ -38,7 +38,7 @@ export function KindBadge({ kind, className }: { kind: string; className?: strin
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-md border bg-card px-1.5 py-0.5 text-[13px] font-medium",
+        "inline-flex items-center gap-1.5 rounded-md border bg-card px-1.5 py-0.5 text-[11px] font-medium",
         className,
       )}
     >
@@ -49,5 +49,5 @@ export function KindBadge({ kind, className }: { kind: string; className?: strin
 }
 
 export function Mono({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <span className={cn("font-mono text-sm", className)}>{children}</span>;
+  return <span className={cn("font-mono text-xs", className)}>{children}</span>;
 }

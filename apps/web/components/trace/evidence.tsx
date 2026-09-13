@@ -19,7 +19,7 @@ export function Retrievals({ trajectory }: { trajectory: Trajectory }) {
   return (
     <div className="space-y-4">
       {rets.map(({ step, r }) => (
-        <div key={r.span_id} className="rounded-lg border bg-card">
+        <div key={r.span_id} className="rounded-xl border border-border/80 bg-card shadow-xs">
           <div className="flex flex-wrap items-center gap-2 border-b px-3 py-2 text-sm">
             <Database className="kind-retrieval h-3.5 w-3.5" />
             <span className="font-medium">Step {step.index + 1}</span>
@@ -70,7 +70,7 @@ export function Tools({ trajectory }: { trajectory: Trajectory }) {
   return (
     <div className="space-y-3">
       {tools.map(({ step, t }) => (
-        <div key={t.span_id} className="rounded-lg border bg-card">
+        <div key={t.span_id} className="rounded-xl border border-border/80 bg-card shadow-xs">
           <div className="flex flex-wrap items-center gap-2 border-b px-3 py-2 text-sm">
             <Wrench className="kind-tool h-3.5 w-3.5" />
             <span className="font-mono font-medium">{t.name}</span>
