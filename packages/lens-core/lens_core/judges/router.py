@@ -86,7 +86,7 @@ class JudgeRouter:
         # back to its rubric, which is by design).
         openrouter = bool(e.get("OPENROUTER_API_KEY"))
         if openrouter:
-            frontier_default = "openrouter/anthropic/claude-3.5-sonnet"
+            frontier_default = "openrouter/anthropic/claude-sonnet-5"
             second_default = "openrouter/openai/gpt-4o-mini"
         else:
             frontier_default = DEFAULTS["frontier"]

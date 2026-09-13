@@ -20,6 +20,7 @@ def _client(monkeypatch: pytest.MonkeyPatch, cassette: Path | None) -> TestClien
         monkeypatch.setenv("LENS_JUDGE_CASSETTE", str(cassette))
     else:
         monkeypatch.delenv("LENS_JUDGE_CASSETTE", raising=False)
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     settings = Settings(span_store="memory", env="test", api_key=None, postgres_dsn="sqlite://")

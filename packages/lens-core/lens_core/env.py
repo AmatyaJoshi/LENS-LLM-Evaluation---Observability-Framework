@@ -10,6 +10,9 @@ from pathlib import Path
 
 
 def load_dotenv(path: str | os.PathLike[str] = ".env") -> None:
+    # never leak a developer .env into the test process
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return
     p = Path(path)
     if not p.exists():
         return

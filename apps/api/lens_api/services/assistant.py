@@ -27,7 +27,7 @@ from lens_api.ingest import normalize
 from lens_api.models.clickhouse import SpanStore
 from lens_api.models.sql import EvalRun, RedteamRun, Score
 from lens_api.settings import Settings
-from lens_core.judges.router import JudgeRouter
+from lens_core.judges.router import JudgeRouter, llm_available
 from lens_core.trace import build_trajectory
 
 log = logging.getLogger("lens.assistant")
@@ -262,14 +262,7 @@ async def chat(
         judge = None
 
     # No usable judge (no cassette, no API key) → deterministic fallback.
-    import os
-
-    has_key = bool(
-        os.environ.get("ANTHROPIC_API_KEY")
-        or os.environ.get("OPENAI_API_KEY")
-        or os.environ.get("LENS_JUDGE_CASSETTE")
-    )
-    if judge is None or not has_key:
+    if judge is None or not llm_available():
         return ChatResponse(
             answer=_fallback_answer(req, context),
             grounded=False,
