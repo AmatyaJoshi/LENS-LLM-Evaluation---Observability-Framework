@@ -8,6 +8,8 @@ from typing import Literal
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from lens_core.env import load_dotenv
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="LENS_", env_file=".env", extra="ignore")
@@ -67,4 +69,5 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
+    load_dotenv()  # make OPENROUTER_API_KEY / LENS_JUDGE_* visible to LiteLLM and the router
     return Settings()

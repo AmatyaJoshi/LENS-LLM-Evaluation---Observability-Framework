@@ -14,6 +14,7 @@ import httpx
 import typer
 
 from lens_core import __version__
+from lens_core.env import load_dotenv
 
 app = typer.Typer(
     name="lens",
@@ -39,6 +40,7 @@ def _root(
     ] = None,
 ) -> None:
     """Lens CLI."""
+    load_dotenv()
 
 
 # ---------------------------------------------------------------------------------------------

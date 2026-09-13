@@ -22,6 +22,22 @@ from lens_core.judges.cassette import CassetteJudge
 
 TIERS: tuple[str, ...] = ("frontier", "second_opinion", "local", "nli")
 
+LLM_KEY_ENV: tuple[str, ...] = (
+    "OPENROUTER_API_KEY",
+    "ANTHROPIC_API_KEY",
+    "OPENAI_API_KEY",
+    "LENS_JUDGE_CASSETTE",
+)
+
+
+def llm_available(env: dict[str, str] | None = None) -> bool:
+    """True when a cloud judge/assistant can actually answer (a key or a cassette is set)."""
+    import os as _os
+
+    e = env if env is not None else _os.environ
+    return any(e.get(k) for k in LLM_KEY_ENV)
+
+
 DEFAULTS: dict[str, str] = {
     "frontier": "anthropic/claude-sonnet-5",
     "second_opinion": "openai/gpt-4.1",
@@ -64,11 +80,24 @@ class JudgeRouter:
             return router
         from lens_core.judges.litellm_judge import LiteLLMJudge
 
-        embedding = e.get("LENS_JUDGE_EMBEDDING_MODEL", DEFAULTS["embedding"])
+        # OpenRouter: one key fronts many providers. When it is set (and no explicit models are
+        # given) default both cloud tiers to OpenRouter models. OpenRouter has no embeddings API,
+        # so embeddings stay off unless an OpenAI key is also present (answer_relevance then falls
+        # back to its rubric, which is by design).
+        openrouter = bool(e.get("OPENROUTER_API_KEY"))
+        if openrouter:
+            frontier_default = "openrouter/anthropic/claude-3.5-sonnet"
+            second_default = "openrouter/openai/gpt-4o-mini"
+        else:
+            frontier_default = DEFAULTS["frontier"]
+            second_default = DEFAULTS["second_opinion"]
+        embedding: str | None = e.get("LENS_JUDGE_EMBEDDING_MODEL") or (
+            None if openrouter and not e.get("OPENAI_API_KEY") else DEFAULTS["embedding"]
+        )
         router.register(
             "frontier",
             LiteLLMJudge(
-                e.get("LENS_JUDGE_FRONTIER_MODEL", DEFAULTS["frontier"]),
+                e.get("LENS_JUDGE_FRONTIER_MODEL", frontier_default),
                 tier="frontier",
                 embedding_model=embedding,
             ),
@@ -76,7 +105,7 @@ class JudgeRouter:
         router.register(
             "second_opinion",
             LiteLLMJudge(
-                e.get("LENS_JUDGE_SECOND_OPINION_MODEL", DEFAULTS["second_opinion"]),
+                e.get("LENS_JUDGE_SECOND_OPINION_MODEL", second_default),
                 tier="second_opinion",
                 embedding_model=embedding,
             ),

@@ -32,13 +32,9 @@ async def chat(
 
 @router.get("/capabilities")
 async def capabilities(settings: Annotated[Settings, Depends(get_settings)]) -> dict[str, object]:
-    import os
+    from lens_core.judges.router import llm_available
 
-    grounded = bool(
-        os.environ.get("ANTHROPIC_API_KEY")
-        or os.environ.get("OPENAI_API_KEY")
-        or os.environ.get("LENS_JUDGE_CASSETTE")
-    )
+    grounded = llm_available()
     return {
         "grounded_answers": grounded,
         "focuses": ["overview", "trace", "eval_run", "redteam_run"],
