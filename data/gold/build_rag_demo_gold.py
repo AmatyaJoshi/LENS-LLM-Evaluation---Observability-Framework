@@ -14,7 +14,9 @@ OUT = Path(__file__).parent
 
 REFUND_PRO = "Acme Pro purchases can be refunded within 30 days of purchase."
 REFUND_BASIC = "Acme Basic has a 14-day refund window."
-REFUND_TIMING = "Acme Pro refunds are credited to the original payment method within 5 business days."
+REFUND_TIMING = (
+    "Acme Pro refunds are credited to the original payment method within 5 business days."
+)
 PORTS = "The Acme collector listens on port 4317 for OTLP/gRPC and 4318 for OTLP/HTTP."
 HOURS = "Acme support is available on weekdays from 9am to 6pm."
 SLA = "Acme Enterprise includes a 99.9% monthly uptime SLA."
@@ -22,16 +24,40 @@ PW = "To reset your password, open Settings then Security and click Reset passwo
 
 # (question, expected_output, contexts)
 BASE: list[tuple[str, str, list[str]]] = [
-    ("What is the refund window for Acme Pro?", "Acme Pro can be refunded within 30 days of purchase.", [REFUND_PRO]),
-    ("How long do I have to return Acme Basic?", "Acme Basic has a 14-day refund window.", [REFUND_BASIC]),
-    ("When are Acme Pro refunds paid out?", "Within 5 business days, to the original payment method.", [REFUND_TIMING]),
+    (
+        "What is the refund window for Acme Pro?",
+        "Acme Pro can be refunded within 30 days of purchase.",
+        [REFUND_PRO],
+    ),
+    (
+        "How long do I have to return Acme Basic?",
+        "Acme Basic has a 14-day refund window.",
+        [REFUND_BASIC],
+    ),
+    (
+        "When are Acme Pro refunds paid out?",
+        "Within 5 business days, to the original payment method.",
+        [REFUND_TIMING],
+    ),
     ("Which port is OTLP/HTTP on?", "Port 4318.", [PORTS]),
     ("Which port is OTLP/gRPC on?", "Port 4317.", [PORTS]),
     ("What are Acme support hours?", "Weekdays, 9am to 6pm.", [HOURS]),
     ("What uptime does Acme Enterprise guarantee?", "A 99.9% monthly uptime SLA.", [SLA]),
-    ("How do I reset my password?", "Open Settings, then Security, and click Reset password.", [PW]),
-    ("Can I refund Acme Pro after three weeks?", "Yes, the Acme Pro refund window is 30 days.", [REFUND_PRO]),
-    ("Is there a refund on Acme Basic after 20 days?", "No, Acme Basic only allows refunds within 14 days.", [REFUND_BASIC]),
+    (
+        "How do I reset my password?",
+        "Open Settings, then Security, and click Reset password.",
+        [PW],
+    ),
+    (
+        "Can I refund Acme Pro after three weeks?",
+        "Yes, the Acme Pro refund window is 30 days.",
+        [REFUND_PRO],
+    ),
+    (
+        "Is there a refund on Acme Basic after 20 days?",
+        "No, Acme Basic only allows refunds within 14 days.",
+        [REFUND_BASIC],
+    ),
 ]
 
 # Out-of-scope questions: the ideal answer is a graceful "I don't know".
