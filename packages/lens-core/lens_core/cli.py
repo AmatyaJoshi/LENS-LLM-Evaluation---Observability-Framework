@@ -374,11 +374,11 @@ def markdown_summary(rows: list[dict[str, Any]], *, title: str) -> str:
     lines = [
         f"### {title}",
         "",
-        "| Metric | Baseline | Current | Δ | Threshold | Status |",
+        "| Metric | Baseline | Current | delta | Threshold | Status |",
         "|---|---|---|---|---|---|",
     ]
     for r in rows:
-        status = "❌ regression" if r["regressed"] else ("✅" if r["delta"] is not None else "–")
+        status = "REGRESSION" if r["regressed"] else ("ok" if r["delta"] is not None else "-")
         lines.append(
             f"| {r['metric']} | {fmt(r['baseline'])} | {fmt(r['current'])} | "
             f"{'–' if r['delta'] is None else f'{r["delta"]:+.3f}'} | {r['threshold']:+.3f} | {status} |"

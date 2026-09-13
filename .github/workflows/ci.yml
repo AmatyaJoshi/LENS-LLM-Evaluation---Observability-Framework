@@ -24,6 +24,40 @@ jobs:
       - run: uv run ruff format --check .
       - run: uv run mypy
       - run: uv run pytest -q
+      - name: training + corpus smoke test
+        run: |
+          uv run python data/probes/build_probes.py
+          uv run python data/gold/build_rag_demo_gold.py
+          uv run python -m training.injection.build_dataset --offline
+
+  eval-gate:
+    name: eval gate (dogfood lens-ci-action)
+    runs-on: ubuntu-latest
+    needs: [python]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv python install 3.12
+      - run: uv sync --frozen
+      - name: prepare a scored dataset (recorded app outputs)
+        run: |
+          cat > ci-dataset.jsonl <<'JSONL'
+          {"id": "1", "input": "What is the refund window for Acme Pro?", "output": "Acme Pro can be refunded within 30 days.", "expected_output": "30 days", "contexts": ["Acme Pro purchases can be refunded within 30 days of purchase."]}
+          {"id": "2", "input": "Which port is OTLP/HTTP on?", "output": "Port 4318.", "expected_output": "4318", "contexts": ["The collector listens on 4317 for gRPC and 4318 for HTTP."]}
+          JSONL
+      - name: baseline run (offline, cassette judge)
+        env:
+          LENS_JUDGE_CASSETTE: tests/fixtures/judge_cassette.json
+        run: uv run lens eval --dataset ci-dataset.jsonl --app rag_demo --metrics faithfulness --local --out baseline.json --sha baseline
+      - name: run the evaluation gate
+        env:
+          LENS_JUDGE_CASSETTE: tests/fixtures/judge_cassette.json
+        run: |
+          uv run lens ci --dataset ci-dataset.jsonl --app rag_demo \
+            --metrics faithfulness --baseline-file baseline.json \
+            --threshold faithfulness:-0.03 --summary-file "$GITHUB_STEP_SUMMARY" --sha "${GITHUB_SHA}"
 
   web:
     name: web (lint, typecheck, build)

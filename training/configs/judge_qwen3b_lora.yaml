@@ -1,0 +1,11 @@
+# lens distilled judge — Qwen2.5-3B-Instruct + LoRA (SPEC.md §7.1)
+model: Qwen/Qwen2.5-3B-Instruct
+epochs: 3
+lr: 1.0e-4
+batch_size: 4
+grad_accum: 8      # effective batch 32
+max_len: 4096
+lora_r: 16
+lora_alpha: 32
+merge: true
+seed: 13

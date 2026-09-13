@@ -1,0 +1,116 @@
+name: "Lens evaluation gate"
+description: "Run Lens evaluations on a dataset and fail the build if any metric regresses beyond a threshold."
+author: "Lens"
+branding:
+  icon: "target"
+  color: "blue"
+
+inputs:
+  dataset:
+    description: "Dataset name (in the Lens API) or path to a .jsonl file"
+    required: true
+  app:
+    description: "Name of the app under evaluation"
+    required: true
+  app_command:
+    description: "Command that starts the app under test (backgrounded); it must serve --target"
+    required: false
+    default: ""
+  target:
+    description: "HTTP endpoint of the app to run on each dataset input (e.g. http://localhost:8100/chat)"
+    required: false
+    default: ""
+  baseline:
+    description: "Baseline run id, git sha, or 'latest'"
+    required: false
+    default: "latest"
+  baseline_file:
+    description: "Path to a previous `lens eval --out` results JSON (offline baseline)"
+    required: false
+    default: ""
+  thresholds:
+    description: "Regression thresholds, e.g. 'faithfulness:-0.03,hallucination:+0.02'"
+    required: false
+    default: ""
+  metrics:
+    description: "Comma-separated metric names"
+    required: false
+    default: "faithfulness,answer_relevance,context_precision,context_recall,hallucination"
+  judge:
+    description: "Judge tier: frontier | second_opinion | local"
+    required: false
+    default: "frontier"
+  endpoint:
+    description: "Lens API base URL (omit for offline mode with --baseline-file)"
+    required: false
+    default: "http://localhost:8000"
+  api_key:
+    description: "Lens API key (X-Lens-API-Key)"
+    required: false
+    default: ""
+  comment_pr:
+    description: "Post the markdown summary as a PR comment"
+    required: false
+    default: "true"
+
+outputs:
+  summary:
+    description: "Markdown summary of the evaluation gate"
+    value: ${{ steps.eval.outputs.summary_path }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+
+    - name: Install lens CLI
+      shell: bash
+      run: uv tool install lens-core
+
+    - name: Start app under test
+      if: inputs.app_command != ''
+      shell: bash
+      run: |
+        nohup ${{ inputs.app_command }} > lens-app.log 2>&1 &
+        for i in $(seq 1 30); do
+          curl -fsS "${{ inputs.target }%/*}" >/dev/null 2>&1 && break || sleep 1
+        done
+
+    - name: Run Lens evaluation gate
+      id: eval
+      shell: bash
+      env:
+        LENS_ENDPOINT: ${{ inputs.endpoint }}
+        LENS_API_KEY: ${{ inputs.api_key }}
+        ANTHROPIC_API_KEY: ${{ env.ANTHROPIC_API_KEY }}
+        OPENAI_API_KEY: ${{ env.OPENAI_API_KEY }}
+      run: |
+        set -o pipefail
+        ARGS=(--dataset "${{ inputs.dataset }}" --app "${{ inputs.app }}" \
+              --metrics "${{ inputs.metrics }}" --judge "${{ inputs.judge }}" \
+              --baseline "${{ inputs.baseline }}" --summary-file lens-summary.md \
+              --out lens-results.json --sha "${GITHUB_SHA}")
+        [ -n "${{ inputs.target }}" ] && ARGS+=(--target "${{ inputs.target }}")
+        [ -n "${{ inputs.thresholds }}" ] && ARGS+=(--threshold "${{ inputs.thresholds }}")
+        [ -n "${{ inputs.baseline_file }}" ] && ARGS+=(--baseline-file "${{ inputs.baseline_file }}")
+        echo "summary_path=lens-summary.md" >> "$GITHUB_OUTPUT"
+        uv tool run --from lens-core lens ci "${ARGS[@]}"
+
+    - name: Comment on PR
+      if: always() && inputs.comment_pr == 'true' && github.event_name == 'pull_request'
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        header: lens-evaluation-gate
+        path: lens-summary.md
+
+    - name: Upload results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: lens-eval-results
+        path: |
+          lens-results.json
+          lens-summary.md

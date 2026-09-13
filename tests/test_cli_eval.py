@@ -77,7 +77,7 @@ def test_thresholds_and_compare() -> None:
     assert by["hallucination"]["regressed"] is True  # rose 0.05 > 0.02 allowed
     assert by["answer_relevance"]["regressed"] is False  # within default 0.02 tolerance
     md = markdown_summary(rows, title="t")
-    assert "❌ regression" in md and "| faithfulness |" in md
+    assert "REGRESSION" in md and "| faithfulness |" in md
 
 
 def test_ci_offline_with_baseline_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

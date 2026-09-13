@@ -1,9 +1,16 @@
 [project]
 name = "lens-sdk"
-version = "0.0.1"
-description = "Lens Python SDK: thin OpenTelemetry/OpenLLMetry wrapper (implemented in phase 8)"
-requires-python = ">=3.12"
-dependencies = []
+version = "0.1.0"
+description = "Lens Python SDK: a thin OpenTelemetry/OpenLLMetry wrapper with Lens helpers"
+requires-python = ">=3.10"
+dependencies = [
+  "opentelemetry-sdk>=1.27",
+  "opentelemetry-exporter-otlp-proto-http>=1.27",
+]
+
+[project.optional-dependencies]
+# Full auto-instrumentation of LLM/vector libraries via OpenLLMetry.
+traceloop = ["traceloop-sdk>=0.30"]
 
 [build-system]
 requires = ["hatchling"]
