@@ -88,7 +88,9 @@ class CassetteJudge(Judge):
         name, version = self._current_prompt or ("unknown", "0")
         exact = _key(name, version, system, user)
         t0 = time.perf_counter()
-        for key in (exact, name):
+        # Fall back to the bare prompt name, then to "" — the latter lets tests script raw
+        # ``_complete`` calls (e.g. the assistant) that never go through a named Prompt.
+        for key in (exact, name, ""):
             responses = self._entries.get(key)
             if responses:
                 idx = self._cursor[key]

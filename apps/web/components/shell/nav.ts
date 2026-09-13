@@ -59,7 +59,7 @@ export const NAV: NavItem[] = [
 ];
 
 /** Phases whose backend exists in this build. Pages for later phases render honest empty states. */
-export const IMPLEMENTED_PHASE = 2;
+export const IMPLEMENTED_PHASE = 6;
 
 export const GROUP_LABEL: Record<NavItem["group"], string> = {
   observe: "Observe",

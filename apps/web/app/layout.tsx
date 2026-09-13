@@ -4,6 +4,7 @@ import { Providers } from "@/lib/providers";
 import { Sidebar } from "@/components/shell/sidebar";
 import { Topbar } from "@/components/shell/topbar";
 import { CommandMenu } from "@/components/shell/command-menu";
+import { AssistantPanel } from "@/components/assistant/assistant-panel";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -28,6 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </div>
           <CommandMenu />
+          <Suspense fallback={null}>
+            <AssistantPanel />
+          </Suspense>
         </Providers>
       </body>
     </html>

@@ -14,7 +14,7 @@ from lens_api import ws
 from lens_api.db import engine_for
 from lens_api.ingest import otlp_http
 from lens_api.models.clickhouse import make_store
-from lens_api.routers import ci, datasets, evals, judges, labels, redteam, traces
+from lens_api.routers import assistant, ci, datasets, evals, judges, labels, redteam, traces
 from lens_api.settings import Settings, get_settings
 from lens_core import __version__
 
@@ -69,6 +69,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(labels.router)
     app.include_router(judges.router)
     app.include_router(redteam.router)
+    app.include_router(assistant.router)
     app.include_router(ci.router)
     return app
 

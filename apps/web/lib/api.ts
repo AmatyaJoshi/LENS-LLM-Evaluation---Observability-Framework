@@ -260,6 +260,205 @@ async function get<T>(path: string, init?: RequestInit): Promise<T> {
   return (await res.json()) as T;
 }
 
+async function post<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(`${API_URL}${path}`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    let detail = res.statusText;
+    try {
+      const b = (await res.json()) as { detail?: string };
+      if (b.detail) detail = b.detail;
+    } catch {
+      /* ignore */
+    }
+    throw new ApiError(res.status, detail);
+  }
+  return res.status === 204 ? (undefined as T) : ((await res.json()) as T);
+}
+
+// ---- eval / judge / label / redteam / assistant types --------------------------------------
+
+export interface MetricSpec {
+  name: string;
+  version: string;
+  requires: string[];
+  higher_is_better: boolean;
+  description: string;
+}
+
+export interface EvalRun {
+  id: string;
+  app: string;
+  dataset_id: string | null;
+  dataset_name: string | null;
+  git_sha: string | null;
+  mode: string;
+  judge_tier: string | null;
+  judge_model: string | null;
+  started_at: string;
+  finished_at: string | null;
+  metrics: Record<string, number>;
+  n_scores: number;
+  n_items: number;
+  cost_usd: number;
+  errors: number;
+}
+
+export interface RunDetail extends EvalRun {
+  items: Array<{
+    trace_id: string | null;
+    example_id: string | null;
+    input?: string;
+    output?: string;
+    expected_output?: string;
+    scores: Record<
+      string,
+      {
+        value: number;
+        rationale: string | null;
+        skipped: boolean;
+        error: string | null;
+        judge_model: string | null;
+      }
+    >;
+  }>;
+  distributions: Record<string, number[]>;
+}
+
+export interface TrendPoint {
+  run_id: string;
+  git_sha: string | null;
+  started_at: string;
+  mean: number;
+  n: number;
+}
+
+export interface DatasetOut {
+  id: string;
+  name: string;
+  description: string | null;
+  split_strategy: string;
+  created_at: string;
+  example_count: number;
+  splits: Record<string, number>;
+}
+
+export interface AgreementReport {
+  metric: string;
+  judge: string;
+  reference: string;
+  n: number;
+  cohen_kappa: number;
+  krippendorff_alpha: number;
+  spearman_rho: number;
+  mean_abs_error: number;
+}
+
+export interface JudgeCost {
+  judge_model: string;
+  metric: string;
+  n: number;
+  cost_per_1k_usd: number;
+  p50_latency_ms: number;
+  p95_latency_ms: number;
+}
+
+export interface JudgeQuality {
+  vs_human: AgreementReport[];
+  between_judges: AgreementReport[];
+  costs: JudgeCost[];
+  judges: string[];
+  metrics: string[];
+  human_labels: number;
+}
+
+export interface QueueItem {
+  trace_id: string | null;
+  example_id: string | null;
+  metric: string;
+  priority: number;
+  judge_scores: Array<{ judge_model: string; value: number; rationale: string | null }>;
+  human_labels: number;
+  input: string | null;
+  output: string | null;
+  contexts: string[];
+}
+
+export interface ProbeCatalogue {
+  total: number;
+  by_category: Record<string, number>;
+  categories: string[];
+  mutators: string[];
+}
+
+export interface RedteamRun {
+  id: string;
+  app: string;
+  target: string;
+  git_sha: string | null;
+  defence: string | null;
+  total_probes: number;
+  successes: number;
+  asr: number;
+  detector_caught: number;
+  detector_caught_rate: number;
+  started_at: string;
+  finished_at: string | null;
+}
+
+export interface ProbeResultOut {
+  id: string;
+  probe_id: string;
+  parent_probe_id: string | null;
+  category: string;
+  tactic: string | null;
+  mutator: string | null;
+  response: string | null;
+  success: boolean;
+  success_reason: string | null;
+  detector_score: number | null;
+  detector_flagged: boolean;
+  trace_id: string | null;
+}
+
+export interface AsrPoint {
+  run_id: string;
+  git_sha: string | null;
+  defence: string | null;
+  started_at: string;
+  total: number;
+  successes: number;
+  asr: number;
+}
+
+export interface FlaggedTrace {
+  trace_id: string;
+  app: string;
+  start_ns: number;
+  flagged_spans: Array<{
+    span_id: string;
+    kind: string;
+    score: number | null;
+    reasons: string | null;
+  }>;
+  max_score: number;
+}
+
+export type AssistantFocus = "overview" | "trace" | "eval_run" | "redteam_run";
+
+export interface ChatResponse {
+  answer: string;
+  grounded: boolean;
+  model: string | null;
+  context_summary: Record<string, unknown>;
+  cost_usd: number;
+  suggestions: string[];
+}
+
 export const api = {
   health: () => get<Health>("/health"),
   apps: () => get<AppUsage[]>("/apps"),
@@ -268,11 +467,73 @@ export const api = {
   traces: (params: TraceQuery) => get<TracePage>(`/traces${qs(params)}`),
   trace: (traceId: string) => get<Span[]>(`/traces/${traceId}`),
   trajectory: (traceId: string) => get<Trajectory>(`/traces/${traceId}/trajectory`),
-  // later-phase resources (return [] until their phase lands)
-  datasets: () => get<unknown[]>("/datasets"),
-  evals: () => get<unknown[]>("/evals"),
-  redteam: () => get<unknown[]>("/redteam"),
-  labels: () => get<unknown[]>("/labels"),
+
+  metrics: () => get<MetricSpec[]>("/metrics"),
+  evalRuns: (params: { app?: string; mode?: string; limit?: number } = {}) =>
+    get<EvalRun[]>(`/evals/runs${qs(params)}`),
+  evalRun: (id: string) => get<RunDetail>(`/evals/runs/${id}`),
+  evalCompare: (a: string, b: string) =>
+    get<{ a: EvalRun; b: EvalRun; deltas: Record<string, number> }>(
+      `/evals/compare${qs({ a, b })}`,
+    ),
+  evalTrends: (params: { metric: string; app?: string }) =>
+    get<TrendPoint[]>(`/evals/trends${qs(params)}`),
+  traceScores: (traceId: string) =>
+    get<
+      Array<{
+        metric: string;
+        value: number;
+        rationale: string | null;
+        judge_model: string | null;
+        sub_scores: Record<string, number> | null;
+      }>
+    >(`/evals/traces/${traceId}/scores`),
+  evaluateTrace: (trace_id: string, metrics?: string[]) =>
+    post<{ status: string }>("/evals/evaluate", { trace_id, metrics }),
+
+  datasets: () => get<DatasetOut[]>("/datasets"),
+  createDataset: (body: { name: string; description?: string; split_strategy?: string }) =>
+    post<DatasetOut>("/datasets", body),
+  datasetExamples: (id: string, params: { limit?: number } = {}) =>
+    get<{ items: Array<Record<string, unknown>>; total: number }>(
+      `/datasets/${id}/examples${qs(params)}`,
+    ),
+  promoteTraces: (id: string, trace_ids: string[]) =>
+    post(`/datasets/${id}/promote`, { trace_ids }),
+
+  judgeQuality: (metric?: string) => get<JudgeQuality>(`/judges/quality${qs({ metric })}`),
+  judgePrompts: () =>
+    get<Array<{ name: string; version: string; variables: string[] }>>("/judges/prompts"),
+
+  labels: (params: Record<string, unknown> = {}) => get<unknown[]>(`/labels${qs(params)}`),
+  labelQueue: (params: { metric: string; labeller?: string; limit?: number }) =>
+    get<QueueItem[]>(`/labels/queue${qs(params)}`),
+  createLabel: (body: {
+    trace_id?: string | null;
+    example_id?: string | null;
+    metric: string;
+    value: number;
+    labeller: string;
+  }) => post("/labels", body),
+
+  probes: () => get<ProbeCatalogue>("/redteam/probes"),
+  redteamRuns: (params: { app?: string } = {}) => get<RedteamRun[]>(`/redteam/runs${qs(params)}`),
+  redteamResults: (id: string, params: { success?: boolean; category?: string } = {}) =>
+    get<ProbeResultOut[]>(`/redteam/runs/${id}/results${qs(params)}`),
+  redteamAsr: (params: { app: string; category?: string }) =>
+    get<AsrPoint[]>(`/redteam/asr${qs(params)}`),
+  flaggedTraffic: (params: { app?: string } = {}) =>
+    get<FlaggedTrace[]>(`/redteam/flagged${qs(params)}`),
+
+  assistantCapabilities: () =>
+    get<{ grounded_answers: boolean; focuses: string[]; note: string }>("/assistant/capabilities"),
+  assistantChat: (body: {
+    messages: Array<{ role: "user" | "assistant"; content: string }>;
+    focus?: AssistantFocus;
+    trace_id?: string | null;
+    run_id?: string | null;
+    app?: string | null;
+  }) => post<ChatResponse>("/assistant/chat", body),
 };
 
 export function windowToSinceNs(w: Window, now = Date.now()): number | undefined {
