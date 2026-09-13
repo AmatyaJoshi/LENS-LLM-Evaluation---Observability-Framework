@@ -9,12 +9,13 @@ ENV UV_COMPILE_BYTECODE=1 \
 
 WORKDIR /app
 
-# Dependency layer: workspace manifests only.
+# Dependency layer: workspace manifests only (keep in sync with [tool.uv.workspace].members).
 COPY pyproject.toml uv.lock .python-version ./
 COPY packages/lens-core/pyproject.toml packages/lens-core/pyproject.toml
 COPY packages/lens-sdk-python/pyproject.toml packages/lens-sdk-python/pyproject.toml
 COPY apps/api/pyproject.toml apps/api/pyproject.toml
 COPY apps/worker/pyproject.toml apps/worker/pyproject.toml
+COPY examples/rag_demo/pyproject.toml examples/rag_demo/pyproject.toml
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --all-packages --no-install-workspace
 
@@ -22,6 +23,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 COPY packages ./packages
 COPY apps/api ./apps/api
 COPY apps/worker ./apps/worker
+COPY examples/rag_demo ./examples/rag_demo
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --all-packages
 
