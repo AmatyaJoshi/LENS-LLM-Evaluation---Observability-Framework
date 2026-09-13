@@ -16,14 +16,14 @@ COPY packages/lens-sdk-python/pyproject.toml packages/lens-sdk-python/pyproject.
 COPY apps/api/pyproject.toml apps/api/pyproject.toml
 COPY apps/worker/pyproject.toml apps/worker/pyproject.toml
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev --no-install-workspace
+    uv sync --frozen --no-dev --all-packages --no-install-workspace
 
 # Source layer.
 COPY packages ./packages
 COPY apps/api ./apps/api
 COPY apps/worker ./apps/worker
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev
+    uv sync --frozen --no-dev --all-packages
 
 EXPOSE 8000
 CMD ["uvicorn", "lens_api.main:app", "--host", "0.0.0.0", "--port", "8000"]

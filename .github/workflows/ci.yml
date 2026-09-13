@@ -63,6 +63,8 @@ jobs:
           curl -fsS http://localhost:8000/traces/0af7651916cd43dd8448eb211c80319c/trajectory | head -c 400
           curl -fsS http://localhost:3000/ >/dev/null
       - if: always()
-        run: docker compose logs --no-color --tail=100
+        run: docker compose ps -a
+      - if: always()
+        run: docker compose logs --no-color --tail=150
       - if: always()
         run: docker compose down -v
