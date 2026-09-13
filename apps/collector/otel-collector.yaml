@@ -1,0 +1,53 @@
+# OpenTelemetry Collector (contrib) configuration for Lens.
+# Receives OTLP over gRPC (4317) and HTTP (4318) from instrumented apps and
+# forwards traces to the Lens API's OTLP/HTTP ingest endpoint.
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+        cors:
+          allowed_origins: ["*"]
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+    spike_limit_mib: 128
+  batch:
+    timeout: 1s
+    send_batch_size: 512
+  # Keep every attribute (SPEC.md §4: never drop unknown attributes). Size caps and
+  # PII redaction are applied by the Lens ingest processor, not here.
+
+exporters:
+  otlphttp/lens:
+    endpoint: ${env:LENS_API_ENDPOINT:-http://api:8000}
+    tls:
+      insecure: true
+    headers:
+      x-lens-api-key: ${env:LENS_API_KEY:-}
+    retry_on_failure:
+      enabled: true
+      initial_interval: 1s
+      max_interval: 10s
+      max_elapsed_time: 60s
+    sending_queue:
+      enabled: true
+      queue_size: 1000
+  debug:
+    verbosity: basic
+
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+service:
+  extensions: [health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp/lens]

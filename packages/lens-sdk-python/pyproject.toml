@@ -1,0 +1,13 @@
+[project]
+name = "lens-sdk"
+version = "0.0.1"
+description = "Lens Python SDK: thin OpenTelemetry/OpenLLMetry wrapper (implemented in phase 8)"
+requires-python = ">=3.12"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["lens_sdk"]

@@ -1,0 +1,162 @@
+# Lens one-command demo (SPEC.md §2.1 Infra).
+#   docker compose up -d --wait
+# Optional local judge serving: docker compose --profile vllm up
+name: lens
+
+x-python-env: &python-env
+  LENS_ENV: dev
+  LENS_SPAN_STORE: clickhouse
+  LENS_CLICKHOUSE_HOST: clickhouse
+  LENS_CLICKHOUSE_PORT: "8123"
+  LENS_CLICKHOUSE_USER: lens
+  LENS_CLICKHOUSE_PASSWORD: lens
+  LENS_CLICKHOUSE_DATABASE: lens
+  LENS_POSTGRES_DSN: postgresql+psycopg://lens:lens@postgres:5432/lens
+  LENS_REDIS_URL: redis://redis:6379/0
+  LENS_API_KEY: ${LENS_API_KEY:-}
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    environment:
+      CLICKHOUSE_DB: lens
+      CLICKHOUSE_USER: lens
+      CLICKHOUSE_PASSWORD: lens
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+    ulimits:
+      nofile: { soft: 262144, hard: 262144 }
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8123/ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: lens
+      POSTGRES_USER: lens
+      POSTGRES_PASSWORD: lens
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lens -d lens"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.111.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    environment:
+      LENS_API_ENDPOINT: http://api:8000
+      LENS_API_KEY: ${LENS_API_KEY:-}
+    volumes:
+      - ./apps/collector/otel-collector.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+      - "13133:13133" # health
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/otelcol-contrib", "--version"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/python.Dockerfile
+    environment:
+      <<: *python-env
+    ports:
+      - "8000:8000"
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "cd apps/api && alembic upgrade head && cd /app &&
+             uvicorn lens_api.main:app --host 0.0.0.0 --port 8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').status==200 else 1)"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/python.Dockerfile
+    environment:
+      <<: *python-env
+    command: celery -A lens_worker.celery_app:app worker -l info -Q lens.eval,lens.redteam
+    depends_on:
+      redis:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A lens_worker.celery_app:app inspect ping -d celery@$$HOSTNAME | grep -q pong"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  web:
+    build:
+      context: ./apps/web
+    environment:
+      NEXT_PUBLIC_LENS_API_URL: http://localhost:8000
+      LENS_API_INTERNAL_URL: http://api:8000
+    ports:
+      - "${LENS_WEB_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  vllm:
+    profiles: ["vllm"]
+    image: vllm/vllm-openai:latest
+    command: ["--model", "${LENS_LOCAL_JUDGE_MODEL:-Qwen/Qwen2.5-3B-Instruct}", "--served-model-name", "lens-judge-small"]
+    ports:
+      - "8001:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+volumes:
+  clickhouse-data:
+  postgres-data:

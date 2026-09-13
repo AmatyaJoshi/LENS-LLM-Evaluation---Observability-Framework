@@ -1,0 +1,414 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "rag_demo"
+            }
+          },
+          {
+            "key": "telemetry.sdk.language",
+            "value": {
+              "stringValue": "python"
+            }
+          },
+          {
+            "key": "telemetry.sdk.name",
+            "value": {
+              "stringValue": "opentelemetry"
+            }
+          }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {
+            "name": "opentelemetry.instrumentation.openai.v1"
+          },
+          "spans": [
+            {
+              "traceId": "0af7651916cd43dd8448eb211c80319c",
+              "spanId": "b7ad6b7169203331",
+              "name": "rag_pipeline.workflow",
+              "kind": 1,
+              "startTimeUnixNano": "1700000000000000000",
+              "endTimeUnixNano": "1700000002000000000",
+              "attributes": [
+                {
+                  "key": "traceloop.span.kind",
+                  "value": {
+                    "stringValue": "workflow"
+                  }
+                },
+                {
+                  "key": "traceloop.entity.name",
+                  "value": {
+                    "stringValue": "rag_pipeline"
+                  }
+                },
+                {
+                  "key": "traceloop.entity.input",
+                  "value": {
+                    "stringValue": "{\"args\": [], \"kwargs\": {\"question\": \"What is the refund window for Acme Pro?\"}}"
+                  }
+                },
+                {
+                  "key": "traceloop.entity.output",
+                  "value": {
+                    "stringValue": "\"Acme Pro purchases can be refunded within 30 days of purchase.\""
+                  }
+                },
+                {
+                  "key": "lens.session.id",
+                  "value": {
+                    "stringValue": "sess-001"
+                  }
+                },
+                {
+                  "key": "lens.run.id",
+                  "value": {
+                    "stringValue": "run-7"
+                  }
+                }
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "0af7651916cd43dd8448eb211c80319c",
+              "spanId": "1111111111111111",
+              "name": "retrieve_docs.task",
+              "kind": 1,
+              "startTimeUnixNano": "1700000000010000000",
+              "endTimeUnixNano": "1700000000110000000",
+              "attributes": [
+                {
+                  "key": "traceloop.span.kind",
+                  "value": {
+                    "stringValue": "task"
+                  }
+                },
+                {
+                  "key": "traceloop.entity.name",
+                  "value": {
+                    "stringValue": "retrieve_docs"
+                  }
+                },
+                {
+                  "key": "lens.retrieval.query",
+                  "value": {
+                    "stringValue": "What is the refund window for Acme Pro?"
+                  }
+                },
+                {
+                  "key": "lens.retrieval.docs",
+                  "value": {
+                    "stringValue": "[{\"id\": \"doc-17\", \"text\": \"Acme Pro purchases can be refunded within 30 days of purchase.\", \"score\": 0.91}, {\"id\": \"doc-42\", \"text\": \"Acme Basic has a 14-day refund window.\", \"score\": 0.77}]"
+                  }
+                }
+              ],
+              "status": {},
+              "parentSpanId": "b7ad6b7169203331"
+            },
+            {
+              "traceId": "0af7651916cd43dd8448eb211c80319c",
+              "spanId": "2222222222222222",
+              "name": "openai.chat",
+              "kind": 1,
+              "startTimeUnixNano": "1700000000120000000",
+              "endTimeUnixNano": "1700000000900000000",
+              "attributes": [
+                {
+                  "key": "gen_ai.system",
+                  "value": {
+                    "stringValue": "OpenAI"
+                  }
+                },
+                {
+                  "key": "llm.request.type",
+                  "value": {
+                    "stringValue": "chat"
+                  }
+                },
+                {
+                  "key": "gen_ai.request.model",
+                  "value": {
+                    "stringValue": "gpt-4o-mini"
+                  }
+                },
+                {
+                  "key": "gen_ai.response.model",
+                  "value": {
+                    "stringValue": "gpt-4o-mini-2024-07-18"
+                  }
+                },
+                {
+                  "key": "gen_ai.usage.prompt_tokens",
+                  "value": {
+                    "intValue": "182"
+                  }
+                },
+                {
+                  "key": "gen_ai.usage.completion_tokens",
+                  "value": {
+                    "intValue": "21"
+                  }
+                },
+                {
+                  "key": "llm.usage.total_tokens",
+                  "value": {
+                    "intValue": "203"
+                  }
+                },
+                {
+                  "key": "llm.is_streaming",
+                  "value": {
+                    "boolValue": false
+                  }
+                },
+                {
+                  "key": "gen_ai.prompt.0.role",
+                  "value": {
+                    "stringValue": "system"
+                  }
+                },
+                {
+                  "key": "gen_ai.prompt.0.content",
+                  "value": {
+                    "stringValue": "You are Acme's support assistant. Answer only from the provided context."
+                  }
+                },
+                {
+                  "key": "gen_ai.prompt.1.role",
+                  "value": {
+                    "stringValue": "user"
+                  }
+                },
+                {
+                  "key": "gen_ai.prompt.1.content",
+                  "value": {
+                    "stringValue": "Context:\n[doc-17] Acme Pro purchases can be refunded within 30 days of purchase.\n[doc-42] Acme Basic has a 14-day refund window.\n\nQuestion: What is the refund window for Acme Pro?"
+                  }
+                },
+                {
+                  "key": "gen_ai.completion.0.role",
+                  "value": {
+                    "stringValue": "assistant"
+                  }
+                },
+                {
+                  "key": "gen_ai.completion.0.finish_reason",
+                  "value": {
+                    "stringValue": "tool_calls"
+                  }
+                },
+                {
+                  "key": "gen_ai.completion.0.tool_calls.0.id",
+                  "value": {
+                    "stringValue": "call_1"
+                  }
+                },
+                {
+                  "key": "gen_ai.completion.0.tool_calls.0.name",
+                  "value": {
+                    "stringValue": "lookup_policy"
+                  }
+                },
+                {
+                  "key": "gen_ai.completion.0.tool_calls.0.arguments",
+                  "value": {
+                    "stringValue": "{\"product\": \"Acme Pro\"}"
+                  }
+                }
+              ],
+              "status": {},
+              "parentSpanId": "b7ad6b7169203331"
+            },
+            {
+              "traceId": "0af7651916cd43dd8448eb211c80319c",
+              "spanId": "3333333333333333",
+              "name": "lookup_policy.tool",
+              "kind": 1,
+              "startTimeUnixNano": "1700000000910000000",
+              "endTimeUnixNano": "1700000000960000000",
+              "attributes": [
+                {
+                  "key": "traceloop.span.kind",
+                  "value": {
+                    "stringValue": "tool"
+                  }
+                },
+                {
+                  "key": "traceloop.entity.name",
+                  "value": {
+                    "stringValue": "lookup_policy"
+                  }
+                },
+                {
+                  "key": "traceloop.entity.input",
+                  "value": {
+                    "stringValue": "{\"args\": [], \"kwargs\": {\"product\": \"Acme Pro\"}}"
+                  }
+                },
+                {
+                  "key": "traceloop.entity.output",
+                  "value": {
+                    "stringValue": "{\"refund_days\": 30}"
+                  }
+                }
+              ],
+              "status": {},
+              "parentSpanId": "b7ad6b7169203331"
+            },
+            {
+              "traceId": "0af7651916cd43dd8448eb211c80319c",
+              "spanId": "4444444444444444",
+              "name": "openai.chat",
+              "kind": 1,
+              "startTimeUnixNano": "1700000000970000000",
+              "endTimeUnixNano": "1700000001950000000",
+              "attributes": [
+                {
+                  "key": "gen_ai.system",
+                  "value": {
+                    "stringValue": "OpenAI"
+                  }
+                },
+                {
+                  "key": "llm.request.type",
+                  "value": {
+                    "stringValue": "chat"
+                  }
+                },
+                {
+                  "key": "gen_ai.request.model",
+                  "value": {
+                    "stringValue": "gpt-4o-mini"
+                  }
+                },
+                {
+                  "key": "gen_ai.response.model",
+                  "value": {
+                    "stringValue": "gpt-4o-mini-2024-07-18"
+                  }
+                },
+                {
+                  "key": "gen_ai.usage.prompt_tokens",
+                  "value": {
+                    "intValue": "231"
+                  }
+                },
+                {
+                  "key": "gen_ai.usage.completion_tokens",
+                  "value": {
+                    "intValue": "16"
+                  }
+                },
+                {
+                  "key": "llm.usage.total_tokens",
+                  "value": {
+                    "intValue": "247"
+                  }
+                },
+                {
+                  "key": "llm.is_streaming",
+                  "value": {
+                    "boolValue": false
+                  }
+                },
+                {
+                  "key": "gen_ai.prompt.0.role",
+                  "value": {
+                    "stringValue": "system"
+                  }
+                },
+                {
+                  "key": "gen_ai.prompt.0.content",
+                  "value": {
+                    "stringValue": "You are Acme's support assistant. Answer only from the provided context."
+                  }
+                },
+                {
+                  "key": "gen_ai.prompt.1.role",
+                  "value": {
+                    "stringValue": "user"
+                  }
+                },
+                {
+                  "key": "gen_ai.prompt.1.content",
+                  "value": {
+                    "stringValue": "Context:\n[doc-17] Acme Pro purchases can be refunded within 30 days of purchase.\n[doc-42] Acme Basic has a 14-day refund window.\n\nQuestion: What is the refund window for Acme Pro?"
+                  }
+                },
+                {
+                  "key": "gen_ai.prompt.2.role",
+                  "value": {
+                    "stringValue": "assistant"
+                  }
+                },
+                {
+                  "key": "gen_ai.prompt.2.tool_calls.0.id",
+                  "value": {
+                    "stringValue": "call_1"
+                  }
+                },
+                {
+                  "key": "gen_ai.prompt.2.tool_calls.0.name",
+                  "value": {
+                    "stringValue": "lookup_policy"
+                  }
+                },
+                {
+                  "key": "gen_ai.prompt.2.tool_calls.0.arguments",
+                  "value": {
+                    "stringValue": "{\"product\": \"Acme Pro\"}"
+                  }
+                },
+                {
+                  "key": "gen_ai.prompt.3.role",
+                  "value": {
+                    "stringValue": "tool"
+                  }
+                },
+                {
+                  "key": "gen_ai.prompt.3.content",
+                  "value": {
+                    "stringValue": "{\"refund_days\": 30}"
+                  }
+                },
+                {
+                  "key": "gen_ai.prompt.3.tool_call_id",
+                  "value": {
+                    "stringValue": "call_1"
+                  }
+                },
+                {
+                  "key": "gen_ai.completion.0.role",
+                  "value": {
+                    "stringValue": "assistant"
+                  }
+                },
+                {
+                  "key": "gen_ai.completion.0.content",
+                  "value": {
+                    "stringValue": "Acme Pro purchases can be refunded within 30 days of purchase."
+                  }
+                },
+                {
+                  "key": "gen_ai.completion.0.finish_reason",
+                  "value": {
+                    "stringValue": "stop"
+                  }
+                }
+              ],
+              "status": {},
+              "parentSpanId": "b7ad6b7169203331"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
