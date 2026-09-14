@@ -25,6 +25,7 @@ type LensNodeData = {
   subtitle?: string;
   body?: string;
   error?: boolean;
+  warn?: string;
   spanId?: string | null;
 };
 type LensNode = Node<LensNodeData, "lens">;
@@ -52,9 +53,11 @@ function LensNodeView({ data, selected }: NodeProps<LensNode>) {
   return (
     <div
       className={cn(
-        "w-[220px] rounded-xl border border-border/80 bg-card text-left shadow-sm shadow-xs transition-shadow",
+        "w-[220px] rounded-xl border border-border/80 bg-card text-left shadow-xs transition-shadow",
         selected && "ring-2 ring-primary",
         data.error && "border-[color:var(--status-critical)]",
+        data.warn &&
+          "ring-[color:var(--status-warning)]/30 border-[color:var(--status-warning)] ring-1",
       )}
       style={{ borderLeft: `3px solid ${COLOR[data.kind]}` }}
     >
@@ -78,6 +81,11 @@ function LensNodeView({ data, selected }: NodeProps<LensNode>) {
         </div>
       )}
       {!data.body && <div className="pb-2" />}
+      {data.warn && (
+        <div className="bg-[color:var(--status-warning)]/15 mx-2.5 mb-2 rounded px-1.5 py-0.5 text-[10px] font-medium text-[color:var(--status-warning)]">
+          {data.warn}
+        </div>
+      )}
       <Handle
         type="source"
         position={Position.Right}
@@ -95,6 +103,7 @@ const ROW_H = 120;
 export function buildGraph(t: Trajectory): { nodes: LensNode[]; edges: Edge[] } {
   const nodes: LensNode[] = [];
   const edges: Edge[] = [];
+  const toolSeen = new Set<string>();
   let col = 0;
   let prev: string | null = null;
   const link = (from: string | null, to: string, animated = false) => {
@@ -174,6 +183,9 @@ export function buildGraph(t: Trajectory): { nodes: LensNode[]; edges: Edge[] } 
 
     step.tool_calls.forEach((tc, i) => {
       const id = `tool-${tc.span_id}`;
+      const sig = `${tc.name}:${JSON.stringify(tc.args)}`;
+      const redundant = toolSeen.has(sig);
+      toolSeen.add(sig);
       nodes.push({
         id,
         type: "lens",
@@ -184,6 +196,7 @@ export function buildGraph(t: Trajectory): { nodes: LensNode[]; edges: Edge[] } 
           subtitle: fmtMs(tc.duration_ms),
           body: JSON.stringify(tc.args),
           error: !!tc.error,
+          warn: redundant ? "redundant call" : undefined,
           spanId: tc.span_id,
         },
       });

@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
-import { FlaskConical, Play, Scissors, ShieldCheck } from "lucide-react";
+import { FlaskConical, GitCompareArrows, Play, Scissors, ShieldCheck } from "lucide-react";
 import type { Span, Trajectory } from "@/lib/api";
 import { api } from "@/lib/api";
 import { fmtInt } from "@/lib/format";
@@ -142,6 +142,47 @@ export function SecurityPanel({ spans }: { spans: Span[] }) {
             </div>
           ))}
         </div>
+      )}
+    </div>
+  );
+}
+
+export function SimilarPanel({ traceId }: { traceId: string }) {
+  const q = useQuery({ queryKey: ["similar", traceId], queryFn: () => api.similar(traceId) });
+  const rows = q.data ?? [];
+  return (
+    <div className="rounded-2xl border border-border/70 bg-card p-3 shadow-xs">
+      <div className="flex items-center gap-2 text-sm font-medium">
+        <GitCompareArrows className="h-4 w-4 text-muted-foreground" /> Similar traces
+      </div>
+      {q.isLoading ? (
+        <Skeleton className="mt-3 h-16" />
+      ) : rows.length === 0 ? (
+        <p className="mt-2 text-xs text-muted-foreground">
+          No lexically similar traces in this app yet.
+        </p>
+      ) : (
+        <ul className="mt-2 divide-y">
+          {rows.map((r) => (
+            <li key={r.trace_id}>
+              <Link
+                href={`/traces/${r.trace_id}`}
+                className="flex items-center gap-2 py-1.5 text-xs hover:opacity-80"
+              >
+                <span
+                  className="tabular w-9 shrink-0 rounded bg-muted px-1 py-0.5 text-center text-[10px] font-medium"
+                  title="Jaccard similarity"
+                >
+                  {(r.similarity * 100).toFixed(0)}%
+                </span>
+                <span className="min-w-0 flex-1 truncate">{r.input_preview ?? r.root_name}</span>
+                {r.status === "error" && (
+                  <span className="text-[10px] text-[color:var(--status-critical)]">error</span>
+                )}
+              </Link>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

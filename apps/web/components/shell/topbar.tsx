@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { NAV } from "@/components/shell/nav";
+import { MobileNav } from "@/components/shell/mobile-nav";
 
 export const ALL_APPS = "__all__";
 
@@ -113,6 +114,7 @@ export function Topbar() {
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border/80 bg-background/80 px-5 backdrop-blur-md lg:px-8">
+      <MobileNav />
       <nav className="flex min-w-0 flex-1 items-center gap-1.5 text-sm">
         <span className="hidden text-muted-foreground sm:inline">Lens</span>
         <ChevronRight className="hidden h-3.5 w-3.5 text-muted-foreground/50 sm:inline" />

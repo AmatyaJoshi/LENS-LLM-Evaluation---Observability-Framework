@@ -95,6 +95,10 @@ export default function JudgesPage() {
           <div className="grid gap-4 lg:grid-cols-2">
             <AgreementTable title="Judges vs human gold set" rows={q?.vs_human ?? []} />
             <AgreementTable title="Judge vs judge" rows={q?.between_judges ?? []} />
+            <AgreementTable
+              title="Inter-annotator (labeller vs labeller)"
+              rows={q?.inter_annotator ?? []}
+            />
           </div>
 
           {q && q.costs.length > 0 && (

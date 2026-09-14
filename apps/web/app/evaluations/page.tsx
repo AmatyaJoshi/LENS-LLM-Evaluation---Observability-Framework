@@ -18,6 +18,7 @@ import { fmtAgo, fmtUsd, shortId } from "@/lib/format";
 import { useAppFilter } from "@/components/shell/topbar";
 import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
+import { CompareRuns } from "@/components/evals/compare-runs";
 import { ScoreBar } from "@/components/shared/score-bar";
 import { AXIS, ChartCard, ChartTooltip, GRID } from "@/components/charts/chart-kit";
 import {
@@ -104,6 +105,8 @@ export default function EvaluationsPage() {
               </ResponsiveContainer>
             )}
           </ChartCard>
+
+          <CompareRuns runs={runs.data ?? []} />
 
           <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-xs">
             <div className="border-b px-4 py-2 text-sm font-medium">Runs</div>

@@ -90,6 +90,56 @@ async def get_trajectory(
     return build_trajectory(spans, normalize.derive(spans))
 
 
+def _tokens(text: str | None) -> set[str]:
+    return {w for w in (text or "").lower().split() if len(w) > 2}
+
+
+@router.get("/traces/{trace_id}/similar")
+async def similar_traces(
+    trace_id: str,
+    store: Annotated[SpanStore, Depends(get_store)],
+    limit: Annotated[int, Query(ge=1, le=50)] = 8,
+) -> list[dict[str, object]]:
+    """Find traces most similar to this one (SPEC.md §8 'similar failures').
+
+    Ranks other traces by Jaccard token overlap of their input+output previews.
+    Works on any span store; when embeddings/pgvector are available they can replace
+    this lexical fallback without changing the API.
+    """
+    spans = await store.get_trace(trace_id)
+    if not spans:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "trace not found")
+    target = build_trajectory(spans, normalize.derive(spans))
+    anchor = _tokens(target.user_input) | _tokens(target.final_output)
+    if not anchor:
+        return []
+    page = await store.list_traces(TraceFilter(app=target.app, limit=500))
+    scored: list[dict[str, object]] = []
+    for t in page.items:
+        if t.trace_id == trace_id:
+            continue
+        other = _tokens(t.input_preview) | _tokens(t.output_preview)
+        if not other:
+            continue
+        inter = len(anchor & other)
+        if inter == 0:
+            continue
+        score = inter / len(anchor | other)
+        scored.append(
+            {
+                "trace_id": t.trace_id,
+                "app": t.app,
+                "root_name": t.root_name,
+                "status": t.status,
+                "input_preview": t.input_preview,
+                "duration_ms": t.duration_ms,
+                "similarity": round(score, 3),
+            }
+        )
+    scored.sort(key=lambda x: x["similarity"], reverse=True)  # type: ignore[arg-type,return-value]
+    return scored[:limit]
+
+
 @router.get("/apps", response_model=list[AppUsage])
 async def list_apps(store: Annotated[SpanStore, Depends(get_store)]) -> list[AppUsage]:
     return await store.list_apps()

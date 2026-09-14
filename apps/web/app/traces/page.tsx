@@ -11,6 +11,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { EmptyState } from "@/components/shared/empty-state";
 import { StatusBadge } from "@/components/shared/badges";
 import { DEFAULT_FILTERS, TraceFilters, type Filters } from "@/components/traces/trace-filters";
+import { PromoteDialog } from "@/components/traces/promote-dialog";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -131,15 +132,18 @@ export default function TracesPage() {
             : "Every instrumented run, newest first"
         }
         actions={
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 text-sm"
-            onClick={exportCsv}
-            disabled={!traces.data?.items.length}
-          >
-            <Download className="mr-1.5 h-3.5 w-3.5" /> Export page
-          </Button>
+          <div className="flex items-center gap-2">
+            <PromoteDialog traceIds={(traces.data?.items ?? []).map((t) => t.trace_id)} />
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 text-sm"
+              onClick={exportCsv}
+              disabled={!traces.data?.items.length}
+            >
+              <Download className="mr-1.5 h-3.5 w-3.5" /> Export page
+            </Button>
+          </div>
         }
       />
       <div className="mb-3">

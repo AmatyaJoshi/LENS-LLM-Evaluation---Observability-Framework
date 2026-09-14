@@ -367,9 +367,20 @@ export interface JudgeCost {
   p95_latency_ms: number;
 }
 
+export interface SimilarTrace {
+  trace_id: string;
+  app: string;
+  root_name: string;
+  status: SpanStatus;
+  input_preview: string | null;
+  duration_ms: number;
+  similarity: number;
+}
+
 export interface JudgeQuality {
   vs_human: AgreementReport[];
   between_judges: AgreementReport[];
+  inter_annotator: AgreementReport[];
   costs: JudgeCost[];
   judges: string[];
   metrics: string[];
@@ -467,6 +478,7 @@ export const api = {
   traces: (params: TraceQuery) => get<TracePage>(`/traces${qs(params)}`),
   trace: (traceId: string) => get<Span[]>(`/traces/${traceId}`),
   trajectory: (traceId: string) => get<Trajectory>(`/traces/${traceId}/trajectory`),
+  similar: (traceId: string) => get<SimilarTrace[]>(`/traces/${traceId}/similar`),
 
   metrics: () => get<MetricSpec[]>("/metrics"),
   evalRuns: (params: { app?: string; mode?: string; limit?: number } = {}) =>

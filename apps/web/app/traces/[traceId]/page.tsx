@@ -15,7 +15,7 @@ import { SpanInspector } from "@/components/trace/span-inspector";
 import { Conversation } from "@/components/trace/conversation";
 import { Retrievals, Tools } from "@/components/trace/evidence";
 import { TrajectoryGraph } from "@/components/trace/trajectory-graph";
-import { ScoresPanel, SecurityPanel } from "@/components/trace/side-panels";
+import { ScoresPanel, SecurityPanel, SimilarPanel } from "@/components/trace/side-panels";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -251,6 +251,7 @@ export default function TraceDetailPage() {
             <div className="space-y-3">
               {t && <ScoresPanel trajectory={t} />}
               {spans.data && <SecurityPanel spans={spans.data} />}
+              <SimilarPanel traceId={traceId} />
             </div>
           </div>
         </TabsContent>

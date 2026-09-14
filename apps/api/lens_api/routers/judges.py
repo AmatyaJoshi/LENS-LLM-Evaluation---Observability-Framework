@@ -41,6 +41,7 @@ class JudgeCost(BaseModel):
 class QualityOut(BaseModel):
     vs_human: list[AgreementReport]
     between_judges: list[AgreementReport]
+    inter_annotator: list[AgreementReport]
     costs: list[JudgeCost]
     judges: list[str]
     metrics: list[str]
@@ -103,6 +104,34 @@ def _percentile(values: list[float], p: float) -> float:
     return ordered[min(len(ordered) - 1, round(p * (len(ordered) - 1)))]
 
 
+def _inter_annotator(session: Session, metric: str | None) -> list[AgreementReport]:
+    """Cohen's kappa between each pair of labellers on items both scored (SPEC.md §13)."""
+    q = select(HumanLabel)
+    if metric:
+        q = q.where(HumanLabel.metric == metric)
+    # metric -> labeller -> item key -> value (latest wins)
+    by: dict[str, dict[str, dict[Key, float]]] = defaultdict(lambda: defaultdict(dict))
+    for lab in session.exec(q).all():
+        by[lab.metric][lab.labeller][(lab.trace_id, lab.example_id)] = lab.value
+    out: list[AgreementReport] = []
+    for m, per_labeller in by.items():
+        names = sorted(per_labeller)
+        for i, a in enumerate(names):
+            for b in names[i + 1 :]:
+                common = sorted(set(per_labeller[a]) & set(per_labeller[b]), key=str)
+                if len(common) >= 2:
+                    out.append(
+                        agreement(
+                            m,
+                            a,
+                            [per_labeller[a][k] for k in common],
+                            b,
+                            [per_labeller[b][k] for k in common],
+                        )
+                    )
+    return out
+
+
 @router.get("/quality", response_model=QualityOut)
 def quality(
     session: Annotated[Session, Depends(get_session)], metric: str | None = None
@@ -155,6 +184,7 @@ def quality(
     return QualityOut(
         vs_human=vs_human,
         between_judges=between,
+        inter_annotator=_inter_annotator(session, metric),
         costs=costs,
         judges=sorted(judges),
         metrics=sorted(scores),

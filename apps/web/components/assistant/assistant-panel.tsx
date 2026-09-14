@@ -40,6 +40,7 @@ export function AssistantPanel() {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [input, setInput] = useState("");
   const focus = useFocus();
+  const convoKey = `lens.assistant.${focus.focus}`;
   const scrollRef = useRef<HTMLDivElement>(null);
   const caps = useQuery({
     queryKey: ["assistant-caps"],
@@ -67,6 +68,23 @@ export function AssistantPanel() {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [turns]);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(convoKey);
+      setTurns(saved ? (JSON.parse(saved) as Turn[]) : []);
+    } catch {
+      setTurns([]);
+    }
+  }, [convoKey]);
+
+  useEffect(() => {
+    try {
+      if (turns.length) localStorage.setItem(convoKey, JSON.stringify(turns.slice(-20)));
+    } catch {
+      /* storage unavailable */
+    }
+  }, [turns, convoKey]);
 
   const chat = useMutation({
     mutationFn: (question: string) => {
