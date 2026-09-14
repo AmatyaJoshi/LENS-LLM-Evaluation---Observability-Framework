@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useState } from "react";
 import { AlertTriangle, ArrowRight, Coins, Cpu, Gauge, Hash, Wrench } from "lucide-react";
-import { api, type Window } from "@/lib/api";
+import { api, API_URL as LENS_API_URL, type Window } from "@/lib/api";
 import { fmtAgo, fmtCompact, fmtInt, fmtMs, fmtPct, fmtUsd } from "@/lib/format";
 import { useAppFilter } from "@/components/shell/topbar";
 import { PageHeader } from "@/components/shared/page-header";
@@ -53,8 +53,9 @@ export default function OverviewPage() {
         <Card className="border-[color:var(--status-critical)]/40 mb-4 px-4 py-3 text-[15px]">
           <span className="font-medium text-[color:var(--status-critical)]">API unreachable.</span>{" "}
           <span className="text-muted-foreground">
-            Start it with <code className="font-mono">uv run lens serve</code> or check the endpoint
-            in Settings.
+            Tried <code className="font-mono">{LENS_API_URL}</code>. Start the API with{" "}
+            <code className="font-mono">uv run --no-sync lens serve --port 8010</code>, or point the
+            dashboard at it via <code className="font-mono">apps/web/.env.local</code>.
           </span>
         </Card>
       )}

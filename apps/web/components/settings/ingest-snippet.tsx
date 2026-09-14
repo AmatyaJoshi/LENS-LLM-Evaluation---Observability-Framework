@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
-const COLLECTOR = API_URL.replace(":8000", ":4318");
+// Collector sits next to the API on 4318 regardless of which port the API itself uses.
+const COLLECTOR = API_URL.replace(/:\d+(?=\/|$)/, ":4318");
 
 const SNIPPETS: Record<string, { label: string; code: string }> = {
   env: {
