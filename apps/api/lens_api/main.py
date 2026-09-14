@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from lens_api import ws
 from lens_api.db import engine_for
 from lens_api.ingest import otlp_http
+from lens_api.middleware import BodySizeLimitMiddleware, RateLimitMiddleware
 from lens_api.models.clickhouse import make_store
 from lens_api.routers import assistant, ci, datasets, evals, judges, labels, redteam, traces
 from lens_api.settings import Settings, get_settings
@@ -48,6 +49,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    app.add_middleware(BodySizeLimitMiddleware, max_bytes=settings.max_request_bytes)
+    if settings.rate_limit_rpm > 0:
+        app.add_middleware(RateLimitMiddleware, rpm=settings.rate_limit_rpm)
 
     @app.get("/health", tags=["meta"])
     async def health() -> dict[str, Any]:

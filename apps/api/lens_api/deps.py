@@ -22,9 +22,10 @@ def require_api_key(
     x_lens_api_key: Annotated[str | None, Header()] = None,
     authorization: Annotated[str | None, Header()] = None,
 ) -> None:
-    if not settings.api_key:
+    keys = settings.valid_keys()
+    if not keys:
         return
     bearer = authorization.removeprefix("Bearer ").strip() if authorization else None
-    if x_lens_api_key == settings.api_key or bearer == settings.api_key:
+    if (x_lens_api_key and x_lens_api_key in keys) or (bearer and bearer in keys):
         return
     raise HTTPException(status.HTTP_401_UNAUTHORIZED, "invalid or missing API key")

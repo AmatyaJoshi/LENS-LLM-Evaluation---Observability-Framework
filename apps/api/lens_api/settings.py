@@ -16,6 +16,11 @@ class Settings(BaseSettings):
 
     env: Literal["dev", "test", "prod"] = "dev"
     api_key: str | None = None  # when set, ingest + API require X-Lens-API-Key / Bearer
+    api_keys: str = ""  # extra comma-separated keys accepted alongside api_key (key rotation)
+
+    # request guards
+    max_request_bytes: int = 32 * 1024 * 1024  # reject bodies larger than this (413)
+    rate_limit_rpm: int = 0  # per-key/IP requests per minute; 0 disables
 
     # span store
     span_store: Literal["clickhouse", "memory", "sqlite"] = "clickhouse"
@@ -59,6 +64,14 @@ class Settings(BaseSettings):
         if isinstance(v, str) and not v.strip():
             return None
         return v
+
+    def valid_keys(self) -> set[str]:
+        keys = {self.api_key} if self.api_key else set()
+        keys |= {k.strip() for k in self.api_keys.split(",") if k.strip()}
+        return keys
+
+    def auth_enabled(self) -> bool:
+        return bool(self.valid_keys())
 
     def redaction_enabled(self, app: str) -> bool:
         if not self.redact_apps:
