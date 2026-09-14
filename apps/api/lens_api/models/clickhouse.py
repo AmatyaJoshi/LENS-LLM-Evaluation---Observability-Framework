@@ -22,6 +22,7 @@ from pydantic import BaseModel, Field
 
 from lens_api.ingest import normalize, semconv
 from lens_api.settings import Settings
+from lens_core import pricing
 from lens_core.trace.model import Span, SpanEvent
 
 MIGRATIONS_DIR = Path(__file__).resolve().parents[2] / "migrations" / "clickhouse"
@@ -91,6 +92,7 @@ class TraceSummary(BaseModel):
     errors: int
     tokens_in: int
     tokens_out: int
+    cost_usd: float = 0.0
     models: list[str] = Field(default_factory=list)
     providers: list[str] = Field(default_factory=list)
     status: str
@@ -276,6 +278,13 @@ def summarise(trace_id: str, spans: Iterable[Span]) -> TraceSummary:
         errors=sum(1 for s in spans if s.status == "error"),
         tokens_in=sum(t[0] for t in tokens),
         tokens_out=sum(t[1] for t in tokens),
+        cost_usd=round(
+            sum(
+                pricing.cost(semconv.model(s.attributes), *semconv.tokens(s.attributes)) or 0.0
+                for s in llm_spans
+            ),
+            8,
+        ),
         models=sorted({semconv.model(s.attributes) for s in llm_spans}),
         providers=sorted({semconv.provider(s.attributes) for s in llm_spans}),
         status="error" if any(s.status == "error" for s in spans) else "ok",
@@ -381,6 +390,7 @@ class InMemorySpanStore:
         stats.error_rate = stats.errors / stats.traces if stats.traces else 0.0
         stats.tokens_in = sum(s.tokens_in for s in sums)
         stats.tokens_out = sum(s.tokens_out for s in sums)
+        stats.cost_usd = round(sum(s.cost_usd for s in sums), 8)
         durations = [s.duration_ms for s in sums]
         stats.p50_ms = _percentile(durations, 0.5)
         stats.p95_ms = _percentile(durations, 0.95)
@@ -697,9 +707,72 @@ def run_migrations(client: Any, database: str) -> list[str]:
     return done
 
 
+class SqliteSpanStore:
+    """Persistent span store backed by SQLite — no Docker required.
+
+    Spans are written to a SQLite table and mirrored in an in-memory index that
+    serves reads, so behaviour is identical to ``InMemorySpanStore`` but survives
+    API restarts (the index is rebuilt from the table on start-up). Suitable for
+    local development and single-node demos; ClickHouse remains the production path.
+    """
+
+    def __init__(self, path: str) -> None:
+        import sqlite3
+
+        self._path = path
+        self._conn = sqlite3.connect(path, check_same_thread=False)
+        self._conn.execute(
+            "CREATE TABLE IF NOT EXISTS spans (trace_id TEXT, span_id TEXT, app TEXT, "
+            "start_ns INTEGER, data TEXT, PRIMARY KEY (trace_id, span_id))"
+        )
+        self._conn.execute("CREATE INDEX IF NOT EXISTS idx_spans_trace ON spans(trace_id)")
+        self._conn.commit()
+        self._mem = InMemorySpanStore()
+        for (blob,) in self._conn.execute("SELECT data FROM spans"):
+            span = Span.model_validate_json(blob)
+            self._mem._spans[span.trace_id][span.span_id] = span
+
+    async def insert_spans(self, spans: Sequence[Span]) -> int:
+        rows = [
+            (s.trace_id, s.span_id, normalize.app_of(s), s.start_ns, s.model_dump_json())
+            for s in spans
+        ]
+        await asyncio.to_thread(self._write, rows)
+        return await self._mem.insert_spans(spans)
+
+    def _write(self, rows: list[tuple[str, str, str, int, str]]) -> None:
+        self._conn.executemany(
+            "INSERT OR REPLACE INTO spans (trace_id, span_id, app, start_ns, data) "
+            "VALUES (?, ?, ?, ?, ?)",
+            rows,
+        )
+        self._conn.commit()
+
+    async def get_trace(self, trace_id: str) -> list[Span]:
+        return await self._mem.get_trace(trace_id)
+
+    async def list_traces(self, flt: TraceFilter) -> TracePage:
+        return await self._mem.list_traces(flt)
+
+    async def overview(
+        self, *, app: str | None, since_ns: int, until_ns: int, bucket_ns: int
+    ) -> OverviewStats:
+        return await self._mem.overview(
+            app=app, since_ns=since_ns, until_ns=until_ns, bucket_ns=bucket_ns
+        )
+
+    async def list_apps(self) -> list[AppUsage]:
+        return await self._mem.list_apps()
+
+    async def ping(self) -> bool:
+        return True
+
+
 def make_store(settings: Settings) -> SpanStore:
     if settings.span_store == "memory":
         return InMemorySpanStore()
+    if settings.span_store == "sqlite":
+        return SqliteSpanStore(settings.sqlite_span_path)
     store = ClickHouseSpanStore(settings)
     store.run_migrations()
     return store

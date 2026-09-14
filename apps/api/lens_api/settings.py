@@ -18,7 +18,8 @@ class Settings(BaseSettings):
     api_key: str | None = None  # when set, ingest + API require X-Lens-API-Key / Bearer
 
     # span store
-    span_store: Literal["clickhouse", "memory"] = "clickhouse"
+    span_store: Literal["clickhouse", "memory", "sqlite"] = "clickhouse"
+    sqlite_span_path: str = "lens_spans.db"
     clickhouse_host: str = "localhost"
     clickhouse_port: int = 8123
     clickhouse_user: str = "lens"

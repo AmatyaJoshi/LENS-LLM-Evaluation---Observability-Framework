@@ -13,7 +13,7 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from lens_core.judges.base import Judge
-from lens_core.redteam.mutators import DETERMINISTIC, apply_deterministic
+from lens_core.redteam.mutators import DETERMINISTIC, LLM_MUTATORS, apply_deterministic, apply_llm
 from lens_core.redteam.probes import Probe
 from lens_core.redteam.scoring import ProbeScore, score_probe
 from lens_core.redteam.targets import Target
@@ -100,6 +100,11 @@ class RedteamRunner:
 
     async def run(self, probes: list[Probe]) -> RunReport:
         expanded = self.expand(probes)
+        llm_names = [m for m in self.mutators if m in LLM_MUTATORS]
+        if llm_names and self.judge is not None:
+            variants = await asyncio.gather(*(apply_llm(p, llm_names, self.judge) for p in probes))
+            for group in variants:
+                expanded.extend(group)
         outcomes = list(await asyncio.gather(*(self._run_one(p) for p in expanded)))
         return aggregate(outcomes)
 

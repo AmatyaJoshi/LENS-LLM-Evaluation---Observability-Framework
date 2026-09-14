@@ -3,14 +3,13 @@ online evaluation of a trace, metric catalogue."""
 
 from __future__ import annotations
 
-import asyncio
 import logging
 from collections import defaultdict
 from datetime import UTC, datetime
 from typing import Annotated, Any
 from uuid import UUID
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import BaseModel, Field
 from sqlmodel import Session, select
 
@@ -351,7 +350,6 @@ def trace_scores(
 async def evaluate_now(
     body: EvaluateIn,
     request: Request,
-    background: BackgroundTasks,
     store: Annotated[SpanStore, Depends(get_store)],
     settings: Annotated[Settings, Depends(get_settings)],
 ) -> dict[str, Any]:
@@ -373,28 +371,27 @@ async def evaluate_now(
             "metrics": metrics,
         }
 
+    # Inline mode: run to completion and return the scores, so the caller (e.g. the
+    # dashboard's "Score now" button) sees results immediately. This is reliable, unlike
+    # fire-and-forget background tasks; use dispatch="celery" for high-volume async work.
     engine = request.app.state.db_engine
-
-    async def _job() -> None:
-        try:
-            await svc.evaluate_trace(
-                body.trace_id,
-                store=store,
-                engine=engine,
-                judge=svc.judge_for(body.judge_tier),
-                metrics=metrics,
-                judge_tier=body.judge_tier,
-            )
-        except Exception:  # noqa: BLE001
-            log.exception("online evaluation failed for %s", body.trace_id)
-
-    if settings.env == "test":
-        await _job()
-        return {
-            "status": "done",
-            "dispatch": "inline",
-            "trace_id": body.trace_id,
-            "metrics": metrics,
-        }
-    background.add_task(asyncio.ensure_future, _job())
-    return {"status": "queued", "dispatch": "inline", "trace_id": body.trace_id, "metrics": metrics}
+    try:
+        run, summary = await svc.evaluate_trace(
+            body.trace_id,
+            store=store,
+            engine=engine,
+            judge=svc.judge_for(body.judge_tier),
+            metrics=metrics,
+            judge_tier=body.judge_tier,
+        )
+    except Exception as exc:  # noqa: BLE001
+        log.exception("online evaluation failed for %s", body.trace_id)
+        raise HTTPException(status.HTTP_502_BAD_GATEWAY, f"evaluation failed: {exc}") from exc
+    return {
+        "status": "done",
+        "dispatch": "inline",
+        "trace_id": body.trace_id,
+        "run_id": str(run.id),
+        "metrics": summary.metrics,
+        "cost_usd": summary.cost_usd,
+    }

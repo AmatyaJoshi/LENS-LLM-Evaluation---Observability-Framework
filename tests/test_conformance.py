@@ -34,7 +34,7 @@ def test_reference_trajectory_content(trajectories: dict[str, Trajectory]) -> No
     assert t.status == "ok"
     assert t.duration_ms == 2000.0
     assert t.total_tokens == 182 + 21 + 231 + 16
-    assert t.total_cost_usd == 0.0
+    assert t.total_cost_usd == pytest.approx(8.415e-5)  # gpt-4o-mini priced
     assert t.user_input is not None and t.user_input.endswith(
         "Question: What is the refund window for Acme Pro?"
     )

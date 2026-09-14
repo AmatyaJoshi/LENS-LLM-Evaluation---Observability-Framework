@@ -22,6 +22,7 @@ from google.protobuf.json_format import MessageToDict
 from opentelemetry.proto.collector.trace.v1.trace_service_pb2 import ExportTraceServiceRequest
 
 from lens_api.ingest import semconv
+from lens_core import pricing
 from lens_core.trace.model import (
     LLMCall,
     Retrieval,
@@ -195,7 +196,7 @@ def derive_llm_call(span: Span) -> LLMCall:
         tool_calls=list(msg_out.tool_calls) if msg_out else [],
         tokens_in=tokens_in,
         tokens_out=tokens_out,
-        cost_usd=None,
+        cost_usd=pricing.cost(semconv.model(attrs), tokens_in, tokens_out),
         temperature=semconv.temperature(attrs),
         prompt_version=str(prompt_version) if prompt_version is not None else None,
         finish_reason=fin,

@@ -13,6 +13,9 @@ import base64
 import codecs
 from collections.abc import Callable
 
+from pydantic import BaseModel, Field
+
+from lens_core.judges.base import Judge
 from lens_core.redteam.probes import Message, Probe
 
 # Unicode confusables: Latin → visually identical Cyrillic/Greek.
@@ -129,4 +132,42 @@ def apply_deterministic(probe: Probe, names: list[str]) -> list[Probe]:
         fn = DETERMINISTIC.get(name)
         if fn is not None:
             out.extend(fn(probe))
+    return out
+
+
+class _Variants(BaseModel):
+    variants: list[str] = Field(default_factory=list)
+
+
+async def apply_llm(probe: Probe, names: list[str], judge: Judge, k: int = 2) -> list[Probe]:
+    """LLM-driven mutators (paraphrase, translate) — need a judge/LLM (SPEC.md §6.3).
+
+    Returns paraphrased / translated variants of ``probe`` with lineage preserved. Any
+    mutator whose prompt is missing or whose call fails is skipped, so a run never breaks
+    on the optional LLM mutators.
+    """
+    from lens_core.judges.prompts import load_prompt
+
+    out: list[Probe] = []
+    for name in names:
+        if name not in LLM_MUTATORS:
+            continue
+        try:
+            prompt = load_prompt(f"mutate_{name}")
+            parsed, _ = await judge.judge(prompt, {"payload": _payload(probe), "k": k}, _Variants)
+        except Exception:  # noqa: BLE001 - optional mutator, never fail the run
+            continue
+        for i, text in enumerate(v for v in parsed.variants if v.strip()):
+            out.append(
+                probe.model_copy(
+                    update={
+                        "id": f"{probe.id}::{name}-{i + 1}",
+                        "payload": text,
+                        "messages": [],
+                        "parent_probe_id": probe.id,
+                        "mutator": name,
+                        "description": f"{name} of {probe.id}",
+                    }
+                )
+            )
     return out
