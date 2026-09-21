@@ -45,5 +45,9 @@ apps/web/next-env.d.ts
 training/injection/data/
 training/judge/data/
 training/*/artifacts/
-training/results/*.json
-training/results/*.png
+
+# Runtime state (regenerable; never commit)
+/lens.db
+/lens_spans.db
+/mlflow.db
+mlruns/

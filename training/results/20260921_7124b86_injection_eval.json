@@ -1,0 +1,72 @@
+{
+  "generated_at": "2026-09-21T15:12:47.857767+00:00",
+  "git_sha": "7124b86",
+  "n_test": 107,
+  "heuristic": {
+    "precision": 1.0,
+    "recall": 0.009708737864077669,
+    "f1": 0.01923076923076923,
+    "accuracy": 0.04672897196261682,
+    "tp": 1,
+    "fp": 0,
+    "fn": 102,
+    "tn": 4,
+    "auroc": 0.5825242718446602,
+    "fpr": 0.0
+  },
+  "model": {
+    "precision": 0.9626168224299065,
+    "recall": 1.0,
+    "f1": 0.9809523809523809,
+    "accuracy": 0.9626168224299065,
+    "tp": 103,
+    "fp": 4,
+    "fn": 0,
+    "tn": 0,
+    "auroc": 0.7864077669902912,
+    "fpr": 1.0
+  },
+  "by_source": {
+    "benign_chat": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "accuracy": 0.0,
+      "tp": 0,
+      "fp": 2,
+      "fn": 0,
+      "tn": 0
+    },
+    "hard_negative": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "accuracy": 0.0,
+      "tp": 0,
+      "fp": 2,
+      "fn": 0,
+      "tn": 0
+    },
+    "lens_probes": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "accuracy": 1.0,
+      "tp": 103,
+      "fp": 0,
+      "fn": 0,
+      "tn": 0
+    }
+  },
+  "hard_negative_fpr": 1.0,
+  "held_out_mutator_recall": 1.0,
+  "held_out_mutators": [
+    "confusables",
+    "zero_width"
+  ],
+  "latency": {
+    "detector": "heuristic",
+    "p50_ms": 0.09780000254977494,
+    "p95_ms": 0.2565000031609088
+  }
+}

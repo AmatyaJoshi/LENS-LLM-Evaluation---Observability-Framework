@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-09-21T15:07:35.411136+00:00",
+  "git_sha": "7124b86",
+  "model": "prajjwal1/bert-tiny",
+  "val_metrics": {
+    "eval_loss": 0.652053952217102,
+    "eval_f1": 0.985781990521327,
+    "eval_runtime": 0.41,
+    "eval_samples_per_second": 260.993,
+    "eval_steps_per_second": 4.878,
+    "epoch": 1.0
+  },
+  "n_train": 857
+}
